@@ -114,6 +114,306 @@
             #mainAppWrapper { padding-top: 2rem !important; }
             #expenseForm { position: sticky; top: 1.25rem; }
         }
+
+        /* Mobile-first responsive improvements */
+        @media (max-width: 640px) {
+            html, body {
+                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden !important;
+            }
+
+            #mainAppWrapper,
+            #mainAppWrapper > div {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+            }
+
+            #mainAppWrapper {
+                padding: .55rem .55rem 4.5rem !important;
+            }
+
+            header {
+                align-items: stretch !important;
+                gap: .65rem !important;
+            }
+
+            header > div:first-child {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+
+            header > div:last-child {
+                width: 100% !important;
+                flex-wrap: wrap;
+            }
+
+            header > div:last-child > div:last-child {
+                flex: 1 1 100%;
+                min-width: 0;
+                width: 100%;
+            }
+
+            #headerMonthSelect {
+                min-width: 0 !important;
+                max-width: 45%;
+            }
+
+            #balanceToggleBtn {
+                min-width: 0;
+                flex: 1;
+            }
+
+            #currentMonthExpense {
+                font-size: .9rem !important;
+            }
+
+            #sync-text {
+                max-width: 55vw;
+            }
+
+            #modeDay2DayBtn,
+            #modeMedicalBtn {
+                min-height: 2.7rem !important;
+                padding-left: .45rem !important;
+                padding-right: .45rem !important;
+                font-size: .72rem !important;
+            }
+
+            /* Keep the dashboard cards inside the viewport */
+            #mainAppWrapper .bg-gradient-to-br {
+                width: 100%;
+                min-width: 0;
+            }
+
+            #monthlySummaryContainer {
+                max-width: 100%;
+                padding-bottom: .4rem;
+            }
+
+            #snapshotCategoriesView {
+                max-width: 100%;
+            }
+
+            /* Filter/action row wraps cleanly instead of pushing the page sideways */
+            #tabTransactionsView > div:first-child {
+                flex-wrap: wrap;
+                align-items: stretch;
+            }
+
+            #tabTransactionsView > div:first-child > div:first-child {
+                flex: 1 1 100%;
+                min-width: 0;
+            }
+
+            #exportCsvBtn {
+                margin-left: auto;
+            }
+
+            /* Transactions become compact mobile cards — no horizontal scrolling */
+            #tabTransactionsView .overflow-x-auto {
+                overflow-x: visible !important;
+                overflow-y: visible !important;
+                border: 0 !important;
+            }
+
+            #tabTransactionsView table,
+            #tabTransactionsView table thead,
+            #tabTransactionsView table tbody,
+            #tabTransactionsView table tr,
+            #tabTransactionsView table td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            #tabTransactionsView table {
+                min-width: 0 !important;
+                border-spacing: 0 !important;
+            }
+
+            #tabTransactionsView table thead {
+                display: none !important;
+            }
+
+            #tabTransactionsView table tbody tr {
+                display: grid !important;
+                grid-template-columns: 24px minmax(0, 1fr) auto 34px;
+                column-gap: .45rem;
+                row-gap: .2rem;
+                align-items: start;
+                margin-bottom: .55rem;
+                padding: .7rem .55rem;
+                border: 1px solid rgba(148,163,184,.16);
+                border-radius: .8rem;
+                background: rgba(255,255,255,.72);
+                box-shadow: 0 3px 10px rgba(15,23,42,.05);
+            }
+
+            .dark #tabTransactionsView table tbody tr {
+                background: rgba(30,41,59,.78);
+                border-color: rgba(148,163,184,.14);
+            }
+
+            #tabTransactionsView table tbody tr td {
+                border: 0 !important;
+                max-width: none !important;
+                min-width: 0 !important;
+                padding: 0 !important;
+                overflow-wrap: anywhere;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(1) {
+                grid-column: 1;
+                grid-row: 1 / 4;
+                width: 24px;
+                padding-top: .15rem !important;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(2) {
+                grid-column: 2;
+                grid-row: 1;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(3) {
+                grid-column: 2;
+                grid-row: 2;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(4) {
+                grid-column: 2;
+                grid-row: 3;
+                margin-top: .1rem;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(5) {
+                grid-column: 3;
+                grid-row: 1 / 4;
+                align-self: center;
+                white-space: nowrap;
+                padding-left: .2rem !important;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(6) {
+                grid-column: 4;
+                grid-row: 1 / 4;
+                align-self: center;
+                padding-left: .1rem !important;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(3) .font-bold {
+                font-size: .78rem !important;
+                line-height: 1.15rem;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(3) .flex.flex-wrap {
+                max-width: 100%;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(4) span {
+                display: inline-block;
+                max-width: 100%;
+                white-space: normal;
+                line-height: 1.05rem;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(6) > div {
+                align-items: center !important;
+                gap: .35rem !important;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(6) button {
+                min-width: 30px;
+                min-height: 30px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: .45rem;
+                background: rgba(148,163,184,.08);
+            }
+
+            /* Forms use the full available width and comfortable touch targets */
+            #expenseForm input,
+            #expenseForm select,
+            #editForm input,
+            #editForm select,
+            #submitBtn,
+            #saveEditBtn {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            #expenseForm input,
+            #expenseForm select,
+            #editForm input,
+            #editForm select {
+                min-height: 2.8rem;
+            }
+
+            #receiptFile {
+                width: 100%;
+                max-width: 100%;
+                overflow: hidden;
+            }
+
+            /* Prevent long labels/buttons from widening the viewport */
+            button, input, select {
+                max-width: 100%;
+            }
+
+            /* Full-width mobile modal content */
+            #imageModal > div,
+            #editModal > div,
+            #changePinModal > div,
+            #editMedicalCategoryModal > div {
+                width: min(100%, 420px) !important;
+                max-width: calc(100vw - 1rem) !important;
+                max-height: calc(100vh - 1rem);
+                overflow-y: auto;
+            }
+
+            #imageModal > div {
+                max-height: calc(100vh - 1.5rem);
+            }
+
+            /* Better spacing for the PIN screen */
+            #pinScreen {
+                padding: .75rem !important;
+            }
+
+            #pinScreen > div {
+                width: 100%;
+                max-width: 340px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            #mainAppWrapper {
+                padding-left: .4rem !important;
+                padding-right: .4rem !important;
+            }
+
+            header h1 {
+                font-size: 1.35rem !important;
+            }
+
+            #modeDay2DayBtn,
+            #modeMedicalBtn {
+                font-size: .65rem !important;
+            }
+
+            #tabTransactionsView table tbody tr {
+                grid-template-columns: 22px minmax(0, 1fr) auto 30px;
+                column-gap: .3rem;
+                padding: .6rem .45rem;
+            }
+
+            #tabTransactionsView table tbody tr td:nth-child(5) {
+                font-size: .7rem !important;
+            }
+        }
+
     </style>
     
     <!-- FIREBASE COMPAT SCRIPTS -->
