@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Personal Expenses</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <style>
+        .hide-scroll-bar::-webkit-scrollbar { display: none; }
+        .hide-scroll-bar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Modern interface layer — IDs, data bindings and JavaScript remain unchanged. */
+        :root { color-scheme: light; }
+        html { background: #f5f7fb; }
+        body { min-height: 100vh; background:
+            radial-gradient(circle at 7% 0%, rgba(59,130,246,.11), transparent 27rem),
+            radial-gradient(circle at 100% 22%, rgba(139,92,246,.09), transparent 28rem), #f5f7fb !important;
+            letter-spacing: .005em; }
+        .dark body, body.dark { color-scheme: dark; background:
+            radial-gradient(circle at 6% 0%, rgba(59,130,246,.16), transparent 28rem),
+            radial-gradient(circle at 100% 18%, rgba(139,92,246,.13), transparent 28rem), #0b1120 !important; }
+        ::selection { background: rgba(59,130,246,.25); }
+        button, select, input { -webkit-tap-highlight-color: transparent; }
+        button { transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease !important; }
+        button:not(:disabled):active { transform: translateY(1px) scale(.985); }
+        button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid rgba(59,130,246,.25) !important; outline-offset: 2px; }
+
+        #mainAppWrapper { padding-top: 1.35rem !important; }
+        #mainAppWrapper > div { max-width: 76rem !important; }
+        header { padding: .35rem 0 .7rem; }
+        header h1 { letter-spacing: -.045em; font-size: clamp(1.55rem, 3vw, 2.2rem) !important; }
+        header > div:first-child > span { filter: drop-shadow(0 5px 7px rgba(37,99,235,.22)); }
+        #darkModeToggle, header button[onclick] { border-radius: .85rem !important; min-width: 2.6rem; }
+        #headerMonthSelect { min-width: 5.8rem; }
+        #balanceToggleBtn { min-height: 2.55rem; }
+
+        #sync-dot { box-shadow: 0 0 0 4px rgba(148,163,184,.14); }
+        #manualSyncBtn { border-radius: .7rem !important; }
+        #modeDay2DayBtn, #modeMedicalBtn { min-height: 2.9rem; }
+        #modeDay2DayBtn { box-shadow: 0 5px 14px rgba(15,23,42,.10) !important; }
+
+        /* Cards, fields, and panels */
+        #mainAppWrapper .bg-white, #mainAppWrapper .dark\\:bg-\\[\#1e293b\] { border-radius: 1rem; }
+        #mainAppWrapper .shadow-md { box-shadow: 0 12px 32px rgba(15,23,42,.07) !important; }
+        #mainAppWrapper .shadow-sm { box-shadow: 0 4px 14px rgba(15,23,42,.045) !important; }
+        .dark #mainAppWrapper .shadow-md { box-shadow: 0 14px 34px rgba(0,0,0,.22) !important; }
+        #expenseForm label { letter-spacing: .01em; }
+        #expenseForm input, #expenseForm select, #editForm input, #editForm select {
+            min-height: 2.65rem; border-radius: .72rem !important; border-color: #dbe3ef !important; box-shadow: none !important;
+            transition: border-color .18s ease, box-shadow .18s ease, background .18s ease !important;
+        }
+        #expenseForm input:focus, #expenseForm select:focus, #editForm input:focus, #editForm select:focus {
+            border-color: #60a5fa !important; box-shadow: 0 0 0 3px rgba(59,130,246,.13) !important;
+        }
+        .dark #expenseForm input, .dark #expenseForm select, .dark #editForm input, .dark #editForm select { border-color: #475569 !important; }
+        #submitBtn, #saveEditBtn { border-radius: .78rem !important; min-height: 2.85rem; box-shadow: 0 8px 17px rgba(37,99,235,.25) !important; }
+        #submitBtn:hover, #saveEditBtn:hover { box-shadow: 0 11px 22px rgba(37,99,235,.32) !important; transform: translateY(-1px); }
+        #shoppingDetails, #roomElectricDetails { border-radius: .85rem !important; }
+
+        /* Dashboard and data views */
+        #mainAppWrapper .bg-gradient-to-br { border-radius: 1.25rem !important; box-shadow: 0 16px 34px rgba(67,56,202,.24) !important; }
+        #monthlySummaryContainer > * { flex: 0 0 auto; }
+        #monthlySummaryContainer::-webkit-scrollbar { height: 5px; }
+        #monthlySummaryContainer::-webkit-scrollbar-thumb { background: rgba(255,255,255,.35); border-radius: 99px; }
+        #snapTabMonths, #snapTabCategories { min-height: 1.8rem; }
+        #tabTransactionsBtn, #tabItemHistoryBtn { padding: .1rem .15rem .6rem !important; }
+        #tabTransactionsBtn.border-blue-600, #tabItemHistoryBtn.border-blue-600 { color: #2563eb !important; border-width: 3px !important; }
+        .dark #tabTransactionsBtn.border-blue-600, .dark #tabItemHistoryBtn.border-blue-600 { color: #93c5fd !important; }
+        #tabTransactionsView, #tabItemHistoryView { border-radius: .95rem; }
+        #filterDate, #filterCategory, #universalDateFilter, #searchItemInput { border-radius: .7rem !important; }
+        /* Keep native category dropdown options readable in both themes. */
+        #filterCategory option, #filterCategory optgroup { background: #ffffff; color: #1e293b; }
+        .dark #filterCategory { color-scheme: dark; color: #e2e8f0 !important; }
+        .dark #filterCategory option, .dark #filterCategory optgroup { background: #1e293b !important; color: #f8fafc !important; }
+        .dark #filterCategory option:checked { background: #2563eb !important; color: #ffffff !important; }
+        table { border-collapse: separate !important; border-spacing: 0 4px !important; }
+        thead tr { background: transparent !important; }
+        tbody tr { box-shadow: 0 2px 8px rgba(15,23,42,.025); }
+        tbody tr td:first-child { border-radius: .65rem 0 0 .65rem; }
+        tbody tr td:last-child { border-radius: 0 .65rem .65rem 0; }
+        tbody tr:hover { box-shadow: 0 6px 15px rgba(15,23,42,.08); transform: translateY(-1px); }
+        .dark tbody tr:hover { box-shadow: 0 6px 15px rgba(0,0,0,.2); }
+        #expenseTableBody td, #itemHistoryTableBody td { border-top: 1px solid rgba(148,163,184,.10); border-bottom: 1px solid rgba(148,163,184,.10); }
+        #expenseTableBody td:first-child, #itemHistoryTableBody td:first-child { border-left: 1px solid rgba(148,163,184,.10); }
+        #expenseTableBody td:last-child, #itemHistoryTableBody td:last-child { border-right: 1px solid rgba(148,163,184,.10); }
+        #exportCsvBtn { border-radius: .7rem !important; }
+
+        /* Overlay experiences */
+        #pinScreen { background: radial-gradient(circle at 50% 0%, #273f72 0, #111c34 38%, #070d1b 100%) !important; }
+        #pinScreen > div { border-radius: 1.45rem !important; background: rgba(30,41,59,.88) !important; backdrop-filter: blur(18px); }
+        #pinInput { border-radius: .85rem !important; }
+        #unlockBtn { border-radius: .85rem !important; box-shadow: 0 10px 24px rgba(37,99,235,.32); }
+        #imageModal, #editModal, #changePinModal, #editMedicalCategoryModal { backdrop-filter: blur(7px); }
+        #imageModal > div, #editModal > div, #changePinModal > div, #editMedicalCategoryModal > div { border-radius: 1.2rem !important; box-shadow: 0 24px 60px rgba(0,0,0,.34) !important; }
+
+        @media (max-width: 640px) {
+            #mainAppWrapper { padding: .7rem .7rem 4rem !important; }
+            header { margin-bottom: .55rem !important; }
+            header > div:first-child { justify-content: flex-start !important; }
+            #mainAppWrapper .grid { gap: 1rem !important; }
+            #mainAppWrapper .p-4 { padding: 1rem !important; }
+            #mainAppWrapper .p-6 { padding: 1.1rem !important; }
+            #sync-text { max-width: 12rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            #manualSyncBtn { padding-inline: .65rem !important; }
+            table { border-spacing: 0 3px !important; }
+            #expenseTableBody td, #itemHistoryTableBody td { padding-top: .6rem !important; padding-bottom: .6rem !important; }
+        }
+        @media (min-width: 768px) {
+            #mainAppWrapper { padding-top: 2rem !important; }
+            #expenseForm { position: sticky; top: 1.25rem; }
+        }
+    </style>
+    
+    <!-- FIREBASE COMPAT SCRIPTS -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body class="bg-gray-50 dark:bg-[#0f172a] text-gray-800 dark:text-gray-100 font-sans transition-colors duration-300">
+
+    <!-- PIN LOCK SCREEN -->
+    <div id="pinScreen" class="fixed inset-0 bg-[#0f172a] z-[100] flex items-center justify-center p-4">
+        <div class="bg-[#1e293b] p-6 sm:p-8 rounded-2xl shadow-2xl max-w-xs w-full border border-gray-700 text-center">
+            <div class="text-4xl mb-3">🔒</div>
+            <h2 class="text-xl font-bold text-white mb-1">App Locked</h2>
+            <p class="text-gray-400 text-xs mb-6">Enter secret PIN to access</p>
+            <div class="space-y-4">
+                <input type="password" id="pinInput" placeholder="****" class="w-full bg-[#0f172a] border border-gray-600 rounded-lg p-3 text-center text-white font-bold text-xl tracking-[0.5em] focus:border-blue-500 focus:outline-none transition" inputmode="numeric">
+                <p id="pinError" class="text-red-500 text-[10px] font-bold hidden uppercase tracking-wider">Incorrect PIN. Try again.</p>
+                <button id="unlockBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md text-sm uppercase tracking-wider">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="mainAppWrapper" class="hidden p-2 pb-16 sm:p-4 md:p-8">
+        <div class="max-w-5xl mx-auto">
+            
+            <!-- Header -->
+            <header class="flex flex-col md:flex-row justify-between items-center mb-4 gap-3">
+                <div class="flex items-center gap-2 w-full md:w-auto justify-center md:justify-start">
+                    <span class="text-2xl sm:text-3xl">💸</span>
+                    <h1 class="text-xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">Expense Tracker</h1>
+                </div>
+                
+                <div class="flex items-center justify-between sm:justify-end gap-2 w-full md:w-auto">
+                    <!-- CHANGE PIN & DARK MODE BUTTONS -->
+                    <div class="flex gap-2">
+                        <button onclick="document.getElementById('changePinModal').classList.remove('hidden')" class="bg-white dark:bg-[#1e293b] border border-gray-200 dark:border-gray-700 p-2 sm:p-2.5 rounded-lg shadow-sm hover:bg-gray-100 transition cursor-pointer text-sm" title="Change App PIN">🔑</button>
+                        <button id="darkModeToggle" class="bg-white dark:bg-[#1e293b] border border-gray-200 dark:border-gray-700 p-2 sm:p-2.5 rounded-lg shadow-sm hover:bg-gray-100 transition cursor-pointer text-sm" title="Toggle Dark Mode">☀️</button>
+                    </div>
+
+                    <!-- MONTH SELECTOR & BALANCE -->
+                    <div class="bg-white dark:bg-[#1e293b] px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between gap-2 sm:gap-3 flex-grow sm:flex-grow-0">
+                        <select id="headerMonthSelect" class="bg-transparent text-gray-700 dark:text-gray-200 text-xs sm:text-sm font-bold sm:font-semibold focus:outline-none cursor-pointer outline-none border-none">
+                            <option value="All" class="dark:bg-gray-800">All Months</option>
+                        </select>
+                        
+                        <div id="balanceToggleBtn" class="border-l border-gray-200 dark:border-gray-700 pl-2 sm:pl-3 flex items-center gap-1.5 sm:gap-2 cursor-pointer select-none group">
+                            <div class="flex flex-col text-right">
+                                <span class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Balance: <span id="currentMonthExpense" class="text-blue-600 dark:text-blue-400 font-black text-sm sm:text-base whitespace-nowrap transition-all">₹ *****</span></span> 
+                                <div class="text-[8.5px] sm:text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 flex gap-2 justify-end font-semibold">
+                                    <span>💵 <span id="cashBalDisplay">***</span></span>
+                                    <span>📱 <span id="onlineBalDisplay">***</span></span>
+                                </div>
+                            </div>
+                            <span id="eyeIcon" class="text-gray-400 text-xs ml-1">👁️</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- SYNC STATUS BAR -->
+            <div class="flex items-center justify-between p-2.5 sm:p-3 bg-white dark:bg-[#1e293b] shadow-sm border border-gray-200 dark:border-gray-700 rounded-lg mb-5 sm:mb-6 transition-colors">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div id="sync-dot" class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-gray-400"></div>
+                    <span id="sync-text" class="text-[11px] sm:text-xs font-bold text-gray-600 dark:text-gray-400 tracking-wide uppercase">Checking Status...</span>
+                </div>
+                <button id="manualSyncBtn" class="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-[10px] sm:text-xs font-extrabold rounded-md hover:bg-indigo-100 transition shadow-sm">
+                    🔄 Refresh Data
+                </button>
+            </div>
+
+            <!-- MASTER APP MODE TOGGLE TABS -->
+            <div class="flex justify-center mb-5 sm:mb-6">
+                <div class="bg-gray-200 dark:bg-[#1e293b] p-1 sm:p-1.5 rounded-lg sm:rounded-xl flex w-full sm:w-auto shadow-inner border border-gray-300 dark:border-gray-700">
+                    <button id="modeDay2DayBtn" class="flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold bg-white dark:bg-[#334155] text-blue-600 dark:text-blue-400 shadow-md transition flex items-center justify-center gap-1 sm:gap-2 whitespace-nowrap">
+                        🏡 Day 2 Day
+                    </button>
+                    <button id="modeMedicalBtn" class="flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition flex items-center justify-center gap-1 sm:gap-2 whitespace-nowrap">
+                        🏥 Medical Travel
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                
+                <!-- ADD FORM -->
+                <div class="bg-white dark:bg-[#1e293b] p-4 sm:p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-800 col-span-1 h-fit transition-colors">
+                    <h2 class="text-base sm:text-xl font-bold mb-3 sm:mb-4 text-gray-800 dark:text-gray-100">Add Transaction</h2>
+                    <form id="expenseForm" class="space-y-3 sm:space-y-4">
+                        <div class="flex gap-4 p-1 bg-gray-100 dark:bg-[#0f172a] rounded-lg border border-gray-200 dark:border-gray-700">
+                            <label class="flex-1 flex items-center justify-center gap-2 cursor-pointer py-1.5 rounded-md transition-all">
+                                <input type="radio" name="txType" value="expense" checked class="peer hidden">
+                                <div class="w-full text-center text-[11px] sm:text-sm font-bold text-gray-500 peer-checked:text-red-600 dark:peer-checked:text-red-400 peer-checked:bg-white dark:peer-checked:bg-[#1e293b] rounded-md py-1.5 shadow-sm transition">🔴 Expense (-)</div>
+                            </label>
+                            <label class="flex-1 flex items-center justify-center gap-2 cursor-pointer py-1.5 rounded-md transition-all">
+                                <input type="radio" name="txType" value="income" class="peer hidden">
+                                <div class="w-full text-center text-[11px] sm:text-sm font-bold text-gray-500 peer-checked:text-green-600 dark:peer-checked:text-green-400 peer-checked:bg-white dark:peer-checked:bg-[#1e293b] rounded-md py-1.5 shadow-sm transition">🟢 Cash In (+)</div>
+                            </label>
+                        </div>
+                        <div class="flex gap-4 p-1 bg-gray-50 dark:bg-[#1e293b] rounded-lg border border-gray-200 dark:border-gray-700">
+                            <label class="flex-1 flex items-center justify-center gap-2 cursor-pointer py-1 rounded-md transition-all">
+                                <input type="radio" name="paymentMode" value="online" checked class="peer hidden">
+                                <div class="w-full text-center text-[11px] sm:text-xs font-bold text-gray-500 peer-checked:text-blue-600 dark:peer-checked:text-blue-400 peer-checked:bg-white dark:peer-checked:bg-gray-700 rounded-md py-1 shadow-sm transition">📱 Online</div>
+                            </label>
+                            <label class="flex-1 flex items-center justify-center gap-2 cursor-pointer py-1 rounded-md transition-all">
+                                <input type="radio" name="paymentMode" value="cash" class="peer hidden">
+                                <div class="w-full text-center text-[11px] sm:text-xs font-bold text-gray-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 peer-checked:bg-white dark:peer-checked:bg-gray-700 rounded-md py-1 shadow-sm transition">💵 Cash</div>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Date</label>
+                            <input type="date" id="date" required class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-2 sm:p-2.5 border text-xs sm:text-sm bg-gray-50 dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Description / To Whom</label>
+                            <input type="text" id="description" list="descriptionSuggestions" required class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-2 sm:p-2.5 border text-xs sm:text-sm bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                            <datalist id="descriptionSuggestions"></datalist>
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Category</label>
+                            <div class="flex gap-2">
+                                <select id="category" class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-2 sm:p-2.5 border bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 text-xs sm:text-sm outline-none"></select>
+                                <button type="button" id="editCategoryBtn" class="hidden bg-amber-50 text-amber-700 border border-amber-200 rounded-md px-3 font-bold" title="Rename Medical Travel Category">✏️</button>
+                                <button type="button" id="deleteCategoryBtn" class="hidden bg-red-100 text-red-600 border border-red-200 rounded-md px-3 font-bold">🗑️</button>
+                            </div>
+                        </div>
+
+                        <!-- Shopping Details -->
+                        <div id="shoppingDetails" class="hidden bg-blue-50 dark:bg-blue-900/20 p-2.5 sm:p-3 rounded-lg border border-blue-100 dark:border-blue-800 space-y-2 sm:space-y-3">
+                            <div class="flex justify-between items-center border-b border-blue-200 dark:border-blue-800 pb-1.5 sm:pb-2">
+                                <label class="block text-[10px] sm:text-[11px] font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider">Shopping List</label>
+                                <button type="button" id="addShoppingItemBtn" class="bg-blue-200 dark:bg-blue-800 hover:bg-blue-300 text-blue-900 dark:text-blue-100 text-[10px] font-bold py-1 px-2 rounded">+ Add Item</button>
+                            </div>
+                            <datalist id="itemSuggestions"></datalist>
+                            <div id="shoppingItemsContainer" class="space-y-2 sm:space-y-3">
+                                <div class="shopping-item-row flex flex-col gap-1.5 sm:gap-2">
+                                    <input type="text" list="itemSuggestions" placeholder="Item Name" class="shop-item-name block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                                    <div class="flex gap-1.5 sm:gap-2">
+                                        <input type="number" step="0.01" placeholder="Qty" class="shop-item-qty block w-1/2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                                        <select class="shop-item-unit block w-1/2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                                            <option value="kg">kg</option><option value="gram">gram</option><option value="liter">liter</option><option value="pcs">pcs</option><option value="packet">packet</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Room/Electric -->
+                        <div id="roomElectricDetails" class="hidden bg-green-50 dark:bg-green-900/20 p-2.5 sm:p-3 rounded-lg border border-green-100 dark:border-green-800 space-y-2 sm:space-y-3">
+                            <label class="block text-[10px] sm:text-[11px] font-bold text-green-800 dark:text-green-400 uppercase tracking-wider">Split Bill</label>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <div class="flex-1"><label class="block text-[9px] text-gray-600 dark:text-gray-400 mb-0.5 uppercase">Rent (₹)</label><input type="number" id="roomRentAmt" placeholder="0" class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none"></div>
+                                <div class="flex-1"><label class="block text-[9px] text-gray-600 dark:text-gray-400 mb-0.5 uppercase">Electric (₹)</label><input type="number" id="electricBillAmt" placeholder="0" class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none"></div>
+                                <div class="flex-1"><label class="block text-[9px] text-gray-600 dark:text-gray-400 mb-0.5 uppercase">Units</label><input type="number" id="electricBillUnit" placeholder="Unit" class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Total Amount (₹)</label>
+                            <input type="number" id="amount" step="0.01" placeholder="0.00" required class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-2 sm:p-2.5 border font-bold text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-[#334155] outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Attach Bill (Optional)</label>
+                            <input type="file" id="receiptFile" accept="image/*" class="block w-full text-[10px] sm:text-[11px] text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:bg-blue-50 dark:file:bg-[#334155] file:text-blue-700 cursor-pointer border border-gray-200 dark:border-gray-700 rounded-md">
+                        </div>
+                        <button id="submitBtn" type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 sm:py-2.5 px-4 rounded-lg transition shadow-md mt-1 text-sm">Save Transaction</button>
+                    </form>
+                </div>
+
+                <!-- RIGHT COLUMN VIEWS -->
+                <div class="col-span-1 md:col-span-2 space-y-4 sm:space-y-6">
+                    
+                    <!-- SNAPSHOT -->
+                    <div class="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg overflow-hidden border border-indigo-400/50">
+                        <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-10 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="relative z-10 flex flex-row justify-between items-center gap-3 mb-4 sm:mb-5">
+                            <div class="flex items-center gap-1.5 sm:gap-2 text-white"><span class="text-lg sm:text-xl">📊</span><h2 class="text-base sm:text-xl font-bold tracking-wide">Snapshot</h2></div>
+                            <div class="bg-black/30 backdrop-blur-md p-0.5 rounded-lg flex gap-1 border border-white/10 shadow-inner">
+                                <button id="snapTabMonths" class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-white text-indigo-700 shadow">Months</button>
+                                <button id="snapTabCategories" class="px-2.5 py-1 rounded-md text-[10px] font-bold text-white/80 hover:text-white">Breakdown</button>
+                            </div>
+                        </div>
+                        
+                        <div id="snapshotMonthsView" class="relative z-10"><div id="monthlySummaryContainer" class="flex overflow-x-auto pb-2 gap-3 hide-scroll-bar items-center"><p class="text-white/80 text-xs">Loading data...</p></div></div>
+                        <div id="snapshotCategoriesView" class="relative z-10 hidden space-y-2 bg-black/20 p-3 rounded-xl border border-white/10">
+                            <div class="flex justify-between items-center text-white/90 text-[10px] font-bold uppercase tracking-wider mb-1"><span>Breakdown (<span id="currentSelectedMonthLabel">This Month</span>)</span></div>
+                            <div id="categoryBreakdownContainer" class="space-y-2 max-h-32 overflow-y-auto hide-scroll-bar pr-1"></div>
+                        </div>
+
+                        <div class="relative z-10 mt-4 pt-3 border-t border-white/20">
+                            <div class="flex flex-row justify-between items-center text-white/90 text-xs mb-1.5 gap-2">
+                                <div class="flex flex-col">
+                                    <div class="flex items-center gap-1.5 font-medium"><span class="text-[10px]">Expense Budget:</span>
+                                        <div id="budgetDisplayView" class="inline-flex items-center"><span id="budgetText" class="font-bold cursor-pointer hover:text-yellow-300 border-b border-dashed border-white/50 text-xs">₹35,000</span></div>
+                                        <div id="budgetEditView" class="hidden items-center gap-1"><input type="number" id="inlineBudgetInput" class="w-16 text-gray-900 text-[10px] px-1.5 py-1 rounded font-bold bg-white outline-none"><button id="inlineSaveBtn" class="bg-green-500 text-white text-[10px] px-2 py-1 rounded font-bold">✓</button><button id="inlineCancelBtn" class="bg-white/20 text-white text-[10px] px-2 py-1 rounded font-bold">✕</button></div>
+                                    </div>
+                                    <span id="budgetTextWords" class="text-[8px] text-white/70 font-semibold mt-0.5 tracking-widest uppercase"></span>
+                                </div>
+                                <span id="budgetPercentage" class="font-extrabold text-sm drop-shadow-md">0%</span>
+                            </div>
+                            <div class="w-full bg-black/20 rounded-full h-1.5 overflow-hidden shadow-inner"><div id="budgetProgressBar" class="bg-blue-400 h-1.5 rounded-full transition-all duration-700" style="width: 0%"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#1e293b] p-3 sm:p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-800 transition-colors">
+                        <div class="flex border-b border-gray-200 dark:border-gray-700 mb-4 sm:mb-5">
+                            <h2 class="pb-2 border-b-2 border-blue-600 text-blue-600 dark:text-blue-400 font-bold text-xs sm:text-sm">Transactions</h2>
+                        </div>
+
+                        <!-- TRANSACTIONS TABLE -->
+                        <div id="tabTransactionsView">
+                            <div class="flex justify-between items-center mb-3 gap-2">
+                                <div class="flex items-center gap-1.5 flex-wrap min-h-[28px]">
+                                    <span id="dateTotalDisplay" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-[10px] font-bold px-2 py-1 rounded-lg hidden text-center"></span>
+                                    <span id="selectedTotalDisplay" class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-bold px-2 py-1 rounded-lg hidden text-center"></span>
+                                    <span id="categoryTotalDisplay" class="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold px-2 py-1 rounded-lg hidden text-center">₹0.00</span>
+                                    <button id="resetAllFiltersBtn" type="button" class="hidden text-[10px] text-red-500 font-bold px-2 py-1 rounded hover:bg-red-50">✕ Reset</button>
+                                </div>
+                                <button id="exportCsvBtn" class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2.5 py-1 rounded-lg">📥 Export CSV</button>
+                            </div>
+
+                            <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                                <table class="min-w-full text-left text-xs sm:text-sm">
+                                    <thead class="bg-gray-100 dark:bg-gray-800/80 text-gray-600 dark:text-gray-400 font-bold border-b border-gray-200 dark:border-gray-700">
+                                        <tr>
+                                            <th class="px-1 py-2.5 w-6 text-center"><input type="checkbox" id="selectAllCheckbox" class="w-3.5 h-3.5 cursor-pointer accent-green-500 rounded" onclick="window.toggleAllVerify(this.checked)"></th>
+                                            <th class="px-1.5 py-2 whitespace-nowrap">
+                                                <div class="relative inline-flex items-center">
+                                                    <label id="dateFilterLabel" for="filterDate" class="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
+                                                        <span id="dateFilterText" class="text-[9px] font-bold uppercase">DATE</span>
+                                                    </label>
+                                                    <input type="date" id="filterDate" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
+                                                    <button id="clearDateBtn" type="button" class="hidden z-20 ml-1 text-red-500 font-bold text-xs p-0.5">✕</button>
+                                                </div>
+                                            </th>
+                                            <th class="px-1 py-2.5 text-[10px]">DETAILS</th>
+                                            <th class="px-1.5 py-2 whitespace-nowrap">
+                                                <div class="relative inline-flex items-center">
+                                                    <div id="catFilterWrapper" class="relative">
+                                                        <!-- The select remains as the functional filter; the button/menu gives dark-mode-safe rendering. -->
+                                                        <select id="filterCategory" class="hidden"></select>
+                                                        <button id="categoryFilterMenuBtn" type="button" class="flex items-center gap-1 px-2 py-1 rounded-md border border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700 text-[9px] font-bold outline-none">
+                                                            <span id="categoryFilterMenuLabel">CAT (All)</span><span class="text-slate-300 text-xs leading-none">⌄</span>
+                                                        </button>
+                                                        <div id="categoryFilterMenu" class="hidden absolute top-full left-0 mt-1 z-40 min-w-[190px] max-h-64 overflow-y-auto rounded-lg border border-slate-600 bg-slate-900 p-1 shadow-2xl"></div>
+                                                    </div>
+                                                    <button id="clearCatBtn" type="button" class="hidden ml-1 text-red-500 font-bold text-xs p-0.5">✕</button>
+                                                </div>
+                                            </th>
+                                            <th class="px-2 py-2.5 text-left text-[10px]">AMT</th>
+                                            <th class="px-2 py-2.5 text-left text-[10px]">ACT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expenseTableBody" class="divide-y divide-gray-100 dark:divide-gray-700/50">
+                                        <tr><td colspan="6" class="text-center py-6 text-[10px] text-gray-500">Connecting...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="imageModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white p-3 rounded-xl max-w-lg w-full relative">
+            <button onclick="document.getElementById('imageModal').classList.add('hidden')" class="absolute top-1 right-2 text-gray-500 font-bold text-xl">&times;</button>
+            <h3 class="font-bold mb-2 text-xs">Receipt</h3>
+            <img id="modalImage" src="" class="w-full h-auto rounded-lg max-h-[70vh] object-contain">
+        </div>
+    </div>
+
+    <!-- CHANGE PIN MODAL -->
+    <div id="changePinModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-xl max-w-sm w-full relative shadow-2xl">
+            <button onclick="document.getElementById('changePinModal').classList.add('hidden')" class="absolute top-2 right-3 text-gray-500 font-bold text-xl">&times;</button>
+            <h3 class="font-bold text-gray-800 dark:text-gray-100 mb-3 text-base">Change App PIN</h3>
+            <form id="changePinForm" class="space-y-3">
+                <input type="password" id="currentPinInput" placeholder="Current PIN" required class="block w-full rounded-md border p-2 text-center tracking-widest font-bold" inputmode="numeric">
+                <input type="password" id="newPinInput" placeholder="New PIN" required class="block w-full rounded-md border p-2 text-center tracking-widest font-bold" inputmode="numeric">
+                <p id="changePinError" class="text-red-500 text-[10px] font-bold hidden text-center">Error</p>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs">Update PIN</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT MEDICAL TRAVEL CATEGORY MODAL -->
+    <div id="editMedicalCategoryModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-xl max-w-sm w-full relative shadow-2xl">
+            <button type="button" id="closeMedicalCategoryModalBtn" class="absolute top-2 right-3 text-gray-500 font-bold text-xl">&times;</button>
+            <h3 class="font-bold text-gray-800 dark:text-gray-100 mb-1 text-base">Edit Medical Category</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Correct the category name. Existing transactions will stay safely linked.</p>
+            <form id="editMedicalCategoryForm" class="space-y-3">
+                <input type="hidden" id="editingMedicalCategoryValue">
+                <input type="text" id="editingMedicalCategoryLabel" required maxlength="60" class="block w-full rounded-lg border border-gray-300 dark:border-gray-600 p-2.5 text-sm bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-sm">Save Category</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div id="editModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-xl max-w-md w-full relative shadow-2xl">
+            <button onclick="document.getElementById('editModal').classList.add('hidden')" class="absolute top-2 right-3 text-gray-500 font-bold text-xl">&times;</button>
+            <h3 class="font-bold text-gray-800 dark:text-gray-100 mb-3 text-base">Edit</h3>
+            <form id="editForm" class="space-y-3">
+                <input type="hidden" id="editDocId">
+                <div class="flex gap-4">
+                    <label><input type="radio" name="editTxType" id="editTypeExpense" value="expense"> Exp</label>
+                    <label><input type="radio" name="editTxType" id="editTypeIncome" value="income"> Inc</label>
+                </div>
+                <div class="flex gap-4">
+                    <label><input type="radio" name="editPaymentMode" id="editPaymentOnline" value="online"> Online</label>
+                    <label><input type="radio" name="editPaymentMode" id="editPaymentCash" value="cash"> Cash</label>
+                </div>
+                <input type="date" id="editDate" required class="w-full border p-2 text-xs">
+                <input type="text" id="editDescription" required class="w-full border p-2 text-xs">
+                <select id="editCategory" class="w-full border p-2 text-xs"></select>
+                <input type="number" id="editAmount" step="0.01" required class="w-full border p-2 text-xs font-bold">
+                <button type="submit" id="saveEditBtn" class="w-full bg-emerald-600 text-white font-bold py-2 rounded-lg text-xs">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const getEl = id => document.getElementById(id);
+        let activeEncodedPin = localStorage.getItem('customAppPin') || "MTIzNA=="; 
+
+        function initAppFeatures() {
+            getEl('pinScreen').classList.add('hidden');
+            getEl('mainAppWrapper').classList.remove('hidden');
+            
+            expensesCol.onSnapshot((snapshot) => {
+                allExpenses = [];
+                let uDesc = new Set(), uItems = new Set();
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    allExpenses.push({ id: doc.id, ...data });
+                    if(data.description) uDesc.add(data.description.trim());
+                    if(data.shoppingItems) data.shoppingItems.forEach(i => { if(i.name) uItems.add(i.name.trim()); });
+                    else if(data.shopItem) uItems.add(data.shopItem.trim());
+                });
+                
+                getEl('descriptionSuggestions').innerHTML = ''; uDesc.forEach(d => getEl('descriptionSuggestions').innerHTML += `<option value="${d}">`);
+                getEl('itemSuggestions').innerHTML = ''; uItems.forEach(i => getEl('itemSuggestions').innerHTML += `<option value="${i}">`);
+
+                if(getEl('category').options.length === 0) updateCategoryUI();
+                
+                if (typeof window.appInitialized === 'undefined') {
+                    window.appInitialized = true; switchMode(currentAppMode); 
+                } else {
+                    updateCategoryUI(); renderExpenses();
+                }
+            });
+        }
+
+        if (localStorage.getItem('myAppSecurePin') === activeEncodedPin) setTimeout(initFirebaseAndStart, 100);
+        else { getEl('pinScreen').classList.remove('hidden'); getEl('mainAppWrapper').classList.add('hidden'); }
+
+        getEl('unlockBtn').addEventListener('click', () => {
+            if (btoa(getEl('pinInput').value) === activeEncodedPin) {
+                localStorage.setItem('myAppSecurePin', activeEncodedPin); initFirebaseAndStart();
+            } else { getEl('pinError').classList.remove('hidden'); getEl('pinInput').value = ''; }
+        });
+
+        getEl('changePinForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (btoa(getEl('currentPinInput').value) !== activeEncodedPin) {
+                getEl('changePinError').innerText = "Current PIN is incorrect!"; getEl('changePinError').classList.remove('hidden'); return;
+            }
+            if (getEl('newPinInput').value.trim() === '') return;
+            const newEncoded = btoa(getEl('newPinInput').value);
+            localStorage.setItem('customAppPin', newEncoded); localStorage.setItem('myAppSecurePin', newEncoded);
+            activeEncodedPin = newEncoded;
+            getEl('changePinForm').reset(); getEl('changePinModal').classList.add('hidden'); alert("Success! App PIN has been changed.");
+        });
+
+        // 🔴 STRICT ONLINE SYNC 🔴
+        function updateSyncUI(status) {
+            const dot = getEl('sync-dot'), txt = getEl('sync-text');
+            if (status === 'synced') {
+                dot.className = 'w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]';
+                txt.innerText = 'Live / Online'; txt.className = 'text-[11px] sm:text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wide';
+            } else if (status === 'syncing') {
+                dot.className = 'w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500 animate-pulse';
+                txt.innerText = 'Connecting...'; txt.className = 'text-[11px] sm:text-xs font-bold text-yellow-600 dark:text-yellow-400 uppercase tracking-wide';
+            } else {
+                dot.className = 'w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]';
+                txt.innerText = 'Offline (No Internet)'; txt.className = 'text-[11px] sm:text-xs font-bold text-red-500 dark:text-red-400 uppercase tracking-wide';
+            }
+        }
+
+        async function triggerSync() {
+            updateSyncUI('syncing');
+            if (!navigator.onLine) { updateSyncUI('error'); return; }
+            try { if(firebase.apps.length > 0) await firebase.firestore().enableNetwork(); setTimeout(()=>updateSyncUI('synced'), 800); } 
+            catch(e) { updateSyncUI('error'); }
+        }
+
+        window.addEventListener('online', triggerSync);
+        window.addEventListener('offline', () => updateSyncUI('error'));
+        getEl('manualSyncBtn').addEventListener('click', triggerSync);
+
+        let expensesCol;
+        function initFirebaseAndStart() {
+            if (!firebase.apps.length) {
+                firebase.initializeApp({
+                    apiKey: "AIzaSyAbcuzbvCsiyVTATPRdaZlW4rGyVvGZ-xU",
+                    authDomain: "day-to-day-c0704.firebaseapp.com",
+                    projectId: "day-to-day-c0704"
+                });
+            }
+            expensesCol = firebase.firestore().collection("my_personal_expenses");
+            triggerSync(); initAppFeatures();
+        }
+
+        let allExpenses = [], currentDisplayedExpenses = [], isFirstLoad = true; 
+        let currentAppMode = localStorage.getItem('myExpenseLastTab') || 'Day2Day';
+        let monthlyBudget = 35000, isBalanceHidden = false;
+        let currentTotalBalance = 0, totalCashBalance = 0, totalOnlineBalance = 0;
+
+        // 🔴 UPDATED CATEGORIES FOR MEDICAL TRAVEL (VELLOR SORNO MONDIR ADDED) 🔴
+        const medicalTravelCategoriesList = ["Doctor Consultation", "Lab Tests & Scans", "Medicines & Pharmacy", "Hospitalization & Surgery", "Travel (Train/Bus/Flight)", "Local Transport (Auto/Taxi)", "Hotel / Accommodation", "Vellor Sorno Mondir", "Water", "Food"];
+        const categoriesDay2Day = [ { value: "Food & Dining", label: "Food & Dining" }, { value: "Shopping", label: "Shopping" }, { value: "Room & Electric", label: "Room Rent & Electric Bill" }, { value: "Fuel & Travel", label: "Fuel & Travel" }, { value: "Taklu - Food", label: "👶 Taklu - Food" }, { value: "Taklu - Shopping", label: "👶 Taklu - Shopping" }, { value: "Taklu - Medical", label: "👶 Taklu - Medical" }, { value: "Medical", label: "Other Medical" }, { value: "Other - Daily Expense", label: "☕ Daily Expense" }, { value: "Other", label: "Other" } ];
+        const categoriesMedicalTravel = [ { value: "Doctor Consultation", label: "Doctor Consultation" }, { value: "Lab Tests & Scans", label: "Lab Tests & Scans" }, { value: "Medicines & Pharmacy", label: "Medicines & Pharmacy" }, { value: "Hospitalization & Surgery", label: "Hospitalization & Surgery" }, { value: "Travel (Train/Bus/Flight)", label: "Travel (Train/Bus/Flight)" }, { value: "Local Transport (Auto/Taxi)", label: "Local Transport (Auto/Taxi)" }, { value: "Hotel / Accommodation", label: "Hotel / Accommodation" }, { value: "Vellor Sorno Mondir", label: "Vellor Sorno Mondir" }, { value: "Water", label: "Water" }, { value: "Food", label: "Food" } ];
+        const categoriesIncome = [ { value: "Salary", label: "Salary" }, { value: "Cash Added", label: "Cash Added / Withdrawn" }, { value: "Business Profit", label: "Business Profit" }, { value: "Other Income", label: "Other Income" } ];
+
+        let customDay2DayCats = JSON.parse(localStorage.getItem('customDay2DayCats') || '[]');
+        let customMedTravelCats = JSON.parse(localStorage.getItem('customMedTravelCats') || '[]');
+        let customIncomeCats = JSON.parse(localStorage.getItem('customIncomeCats') || '[]');
+        // Keep the original category values intact so existing Firestore records remain compatible.
+        let medicalCategoryLabels = JSON.parse(localStorage.getItem('medicalCategoryLabels') || '{}');
+        const getMedicalCategoryLabel = (category) => medicalCategoryLabels[category.value] || category.label;
+        const getCategoryDisplayName = (value) => {
+            const medicalCategory = categoriesMedicalTravel.find(category => category.value === value);
+            return medicalCategory ? getMedicalCategoryLabel(medicalCategory) : value;
+        };
+
+        getEl('date').valueAsDate = new Date();
+        document.querySelectorAll('input[name="txType"]').forEach(r => r.addEventListener('change', () => { updateCategoryUI(); checkDeleteButtonVisibility(getEl('category').value); }));
+        document.querySelectorAll('input[name="editTxType"]').forEach(r => r.addEventListener('change', () => updateCategoryUI('edit') ));
+
+        function checkDeleteButtonVisibility(val) {
+            const txType = document.querySelector('input[name="txType"]:checked').value;
+            const delBtn = getEl('deleteCategoryBtn');
+            const editBtn = getEl('editCategoryBtn');
+            if (txType === 'expense' && (customDay2DayCats.includes(val) || customMedTravelCats.includes(val))) delBtn.classList.remove('hidden');
+            else if (txType === 'income' && customIncomeCats.includes(val)) delBtn.classList.remove('hidden');
+            else delBtn.classList.add('hidden');
+            if (txType === 'expense' && currentAppMode === 'MedicalTravel' && categoriesMedicalTravel.some(category => category.value === val)) editBtn.classList.remove('hidden');
+            else editBtn.classList.add('hidden');
+        }
+
+        function renderCategoryFilterMenu() {
+            const select = getEl('filterCategory');
+            const menu = getEl('categoryFilterMenu');
+            const button = getEl('categoryFilterMenuBtn');
+            const label = getEl('categoryFilterMenuLabel');
+            if (!select || !menu || !button || !label) return;
+            const selectedOption = select.options[select.selectedIndex];
+            label.textContent = selectedOption ? selectedOption.textContent : 'CAT (All)';
+            menu.innerHTML = '';
+            const incomeCategoryValues = new Set([...categoriesIncome.map(category => category.value), ...customIncomeCats]);
+            let incomeDividerAdded = false;
+            Array.from(select.options).forEach(option => {
+                if (!incomeDividerAdded && incomeCategoryValues.has(option.value)) {
+                    const divider = document.createElement('div');
+                    divider.className = 'my-1.5 border-t border-slate-600 pt-1.5 px-2 text-[10px] font-bold uppercase tracking-wider text-emerald-300';
+                    divider.textContent = 'Income categories';
+                    menu.appendChild(divider);
+                    incomeDividerAdded = true;
+                }
+                const optionButton = document.createElement('button');
+                const isSelected = option.value === select.value;
+                optionButton.type = 'button';
+                optionButton.className = `block w-full rounded-md px-3 py-2 text-left text-xs font-medium transition ${isSelected ? 'bg-blue-600 text-white' : 'text-slate-100 hover:bg-slate-700'}`;
+                optionButton.textContent = option.textContent;
+                optionButton.addEventListener('click', () => {
+                    select.value = option.value;
+                    menu.classList.add('hidden');
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+                menu.appendChild(optionButton);
+            });
+        }
+
+        getEl('categoryFilterMenuBtn').addEventListener('click', () => {
+            const menu = getEl('categoryFilterMenu');
+            const willOpen = menu.classList.contains('hidden');
+            menu.classList.toggle('hidden');
+            if (willOpen) renderCategoryFilterMenu();
+        });
+
+        function updateCategoryUI(target = 'both') {
+            const txType = document.querySelector('input[name="txType"]:checked').value;
+            if (target === 'both' || target === 'add') {
+                let baseCats = txType === 'income' ? categoriesIncome : (currentAppMode === 'Day2Day' ? categoriesDay2Day : categoriesMedicalTravel);
+                let customCats = txType === 'income' ? customIncomeCats : (currentAppMode === 'Day2Day' ? customDay2DayCats : customMedTravelCats);
+                let opts = ''; baseCats.forEach(c => opts += `<option value="${c.value}">${currentAppMode === 'MedicalTravel' && txType === 'expense' ? getMedicalCategoryLabel(c) : c.label}</option>`); customCats.forEach(c => opts += `<option value="${c}">🏷️ ${c}</option>`);
+                opts += `<option value="ADD_NEW" class="font-bold text-blue-600">➕ Add New Category...</option>`; getEl('category').innerHTML = opts;
+            }
+            if (target === 'both' || target === 'edit') {
+                let editTxType = document.querySelector('input[name="editTxType"]:checked') ? document.querySelector('input[name="editTxType"]:checked').value : 'expense';
+                let allOpts = '';
+                if (editTxType === 'income') {
+                    categoriesIncome.forEach(c => allOpts += `<option value="${c.value}">${c.label}</option>`); customIncomeCats.forEach(c => allOpts += `<option value="${c}">🏷️ ${c}</option>`);
+                } else {
+                    allOpts += '<optgroup label="Day 2 Day">'; categoriesDay2Day.forEach(c => allOpts += `<option value="${c.value}">${c.label}</option>`); customDay2DayCats.forEach(c => allOpts += `<option value="${c}">🏷️ ${c}</option>`);
+                    allOpts += '</optgroup><optgroup label="Medical Travel">'; categoriesMedicalTravel.forEach(c => allOpts += `<option value="${c.value}">${getMedicalCategoryLabel(c)}</option>`); customMedTravelCats.forEach(c => allOpts += `<option value="${c}">🏷️ ${c}</option>`); allOpts += '</optgroup>';
+                }
+                getEl('editCategory').innerHTML = allOpts;
+            }
+            if (target === 'both') {
+                let fOpts = `<option value="All">CAT (All)</option>`;
+                (currentAppMode === 'Day2Day' ? categoriesDay2Day : categoriesMedicalTravel).forEach(c => fOpts += `<option value="${c.value}">${currentAppMode === 'MedicalTravel' ? getMedicalCategoryLabel(c) : c.label}</option>`);
+                (currentAppMode === 'Day2Day' ? customDay2DayCats : customMedTravelCats).forEach(c => fOpts += `<option value="${c}">🏷️ ${c}</option>`);
+                categoriesIncome.forEach(c => fOpts += `<option value="${c.value}">${c.label}</option>`); customIncomeCats.forEach(c => fOpts += `<option value="${c}">🏷️ ${c}</option>`);
+                getEl('filterCategory').innerHTML = fOpts;
+                renderCategoryFilterMenu();
+            }
+        }
+
+        function switchMode(mode) {
+            currentAppMode = mode; localStorage.setItem('myExpenseLastTab', mode);
+            getEl('modeDay2DayBtn').className = mode === 'Day2Day' ? "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold bg-white dark:bg-[#334155] text-blue-600 dark:text-blue-400 shadow-md transition whitespace-nowrap" : "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 hover:text-gray-700 whitespace-nowrap";
+            getEl('modeMedicalBtn').className = mode === 'MedicalTravel' ? "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold bg-white dark:bg-[#334155] text-blue-600 dark:text-blue-400 shadow-md transition whitespace-nowrap" : "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 hover:text-gray-700 whitespace-nowrap";
+            
+            monthlyBudget = localStorage.getItem('myExpenseBudget_' + currentAppMode) || (currentAppMode === 'Day2Day' ? 35000 : 200000);
+            getEl('budgetText').innerText = `₹${formatINR(monthlyBudget)}`;
+            updateCategoryUI(); checkDeleteButtonVisibility(getEl('category').value);
+            getEl('filterDate').value = ''; getEl('filterCategory').value = 'All';
+            renderExpenses();
+            getEl('shoppingDetails').classList.add('hidden'); getEl('roomElectricDetails').classList.add('hidden');
+            getEl('amount').readOnly = false; getEl('amount').classList.remove('bg-gray-200', 'dark:bg-[#1e293b]');
+        }
+
+        getEl('modeDay2DayBtn').addEventListener('click', () => switchMode('Day2Day'));
+        getEl('modeMedicalBtn').addEventListener('click', () => switchMode('MedicalTravel'));
+
+        function getActiveExpenses() {
+            // 🔴 100% BULLETPROOF CATEGORY FILTER 🔴
+            return allExpenses.filter(exp => {
+                if (exp.appMode) return exp.appMode === currentAppMode;
+                if (exp.txType === 'income') return currentAppMode === 'Day2Day'; 
+                
+                let catSafe = (exp.category || '').trim();
+                let catLower = catSafe.toLowerCase();
+                
+                // Agar category me 'vellor', 'sorno', 'water', 'food' etc hai toh usey medical me daalo
+                let isMed = medicalTravelCategoriesList.includes(catSafe) || customMedTravelCats.includes(catSafe) || 
+                            catLower.includes('sorno') || catLower.includes('vellor') || catLower.includes('water') || catLower.includes('food');
+                
+                // Force Taklu and Medical back to Day2Day 
+                if (catLower.includes('taklu') || catLower === 'medical' || catLower === 'other medical') isMed = false;
+
+                if (exp.date && exp.date.startsWith('2026-08')) isMed = false; 
+                return currentAppMode === 'MedicalTravel' ? isMed : !isMed;
+            });
+        }
+
+        function formatINR(amt) { return Number(amt || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+        // Older records may use a different letter case (for example VELLOR SORNO MONDIR).
+        // Compare category filters safely without changing the stored Firestore value.
+        const sameCategory = (first, second) => {
+            const normalizedFirst = String(first || '').trim().replace(/\s+/g, ' ').toLowerCase();
+            const normalizedSecond = String(second || '').trim().replace(/\s+/g, ' ').toLowerCase();
+            // Supports older saved names such as "WATER", "Drinking Water", or "Water Bottle".
+            return normalizedFirst === normalizedSecond || (normalizedSecond.length >= 3 && normalizedFirst.includes(normalizedSecond));
+        };
+
+        window.toggleRowVerify = function(docId, currentState, event) {
+            if (event.target.closest('button')) return; 
+            if (!navigator.onLine) { alert("Internet Required!"); return; }
+            let nextState = currentState === 0 ? 1 : (currentState === 1 ? 2 : 0);
+            firebase.firestore().collection("my_personal_expenses").doc(docId).update({ verified: nextState }).catch(e=>console.error(e));
+        }
+
+        window.toggleAllVerify = function(isChecked) {
+            if (!navigator.onLine) { alert("Internet Required!"); return; }
+            let finExp = getActiveExpenses(); 
+            if(getEl('filterDate').value) finExp = finExp.filter(e => e.date === getEl('filterDate').value);
+            else if (getEl('headerMonthSelect').value !== "All") finExp = finExp.filter(e => e.date.startsWith(getEl('headerMonthSelect').value));
+            if(getEl('filterCategory').value !== 'All') finExp = finExp.filter(e => sameCategory(e.category, getEl('filterCategory').value));
+            if(finExp.length === 0) return;
+            const batch = firebase.firestore().batch();
+            finExp.forEach(exp => batch.update(firebase.firestore().collection("my_personal_expenses").doc(exp.id), { verified: isChecked ? 1 : 0 }));
+            batch.commit().catch(e=>console.error(e));
+        }
+
+        getEl('deleteCategoryBtn').addEventListener('click', () => {
+            const txType = document.querySelector('input[name="txType"]:checked').value; const cat = getEl('category').value;
+            if(confirm(`Delete custom category "${cat}"?`)) {
+                if (txType === 'income') { customIncomeCats = customIncomeCats.filter(c => c !== cat); localStorage.setItem('customIncomeCats', JSON.stringify(customIncomeCats)); }
+                else if(currentAppMode === 'Day2Day') { customDay2DayCats = customDay2DayCats.filter(c => c !== cat); localStorage.setItem('customDay2DayCats', JSON.stringify(customDay2DayCats)); }
+                else { customMedTravelCats = customMedTravelCats.filter(c => c !== cat); localStorage.setItem('customMedTravelCats', JSON.stringify(customMedTravelCats)); }
+                updateCategoryUI(); checkDeleteButtonVisibility(getEl('category').value);
+            }
+        });
+
+        getEl('editCategoryBtn').addEventListener('click', () => {
+            const selectedValue = getEl('category').value;
+            const selectedCategory = categoriesMedicalTravel.find(category => category.value === selectedValue);
+            if (!selectedCategory || currentAppMode !== 'MedicalTravel') return;
+            getEl('editingMedicalCategoryValue').value = selectedValue;
+            getEl('editingMedicalCategoryLabel').value = getMedicalCategoryLabel(selectedCategory);
+            getEl('editMedicalCategoryModal').classList.remove('hidden');
+            setTimeout(() => getEl('editingMedicalCategoryLabel').focus(), 0);
+        });
+
+        getEl('closeMedicalCategoryModalBtn').addEventListener('click', () => getEl('editMedicalCategoryModal').classList.add('hidden'));
+        getEl('editMedicalCategoryForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const selectedValue = getEl('editingMedicalCategoryValue').value;
+            const newLabel = getEl('editingMedicalCategoryLabel').value.trim();
+            if (!selectedValue || !newLabel) return;
+            medicalCategoryLabels[selectedValue] = newLabel;
+            localStorage.setItem('medicalCategoryLabels', JSON.stringify(medicalCategoryLabels));
+            updateCategoryUI();
+            getEl('category').value = selectedValue;
+            checkDeleteButtonVisibility(selectedValue);
+            getEl('editMedicalCategoryModal').classList.add('hidden');
+            renderExpenses();
+        });
+
+        getEl('category').addEventListener('change', function() {
+            if (this.value === 'ADD_NEW') {
+                const newCat = prompt("Enter Category Name:");
+                if (newCat && newCat.trim() !== "") {
+                    const txType = document.querySelector('input[name="txType"]:checked').value;
+                    if (txType === 'income') { customIncomeCats.push(newCat.trim()); localStorage.setItem('customIncomeCats', JSON.stringify(customIncomeCats)); }
+                    else if (currentAppMode === 'Day2Day') { customDay2DayCats.push(newCat.trim()); localStorage.setItem('customDay2DayCats', JSON.stringify(customDay2DayCats)); }
+                    else { customMedTravelCats.push(newCat.trim()); localStorage.setItem('customMedTravelCats', JSON.stringify(customMedTravelCats)); }
+                    updateCategoryUI(); this.value = newCat.trim();
+                } else updateCategoryUI();
+            }
+            checkDeleteButtonVisibility(this.value);
+            getEl('shoppingDetails').classList.add('hidden'); getEl('roomElectricDetails').classList.add('hidden');
+            getEl('amount').readOnly = false; getEl('amount').classList.remove('bg-gray-200', 'dark:bg-[#1e293b]');
+            if (this.value === 'Shopping' || this.value === 'Taklu - Shopping') getEl('shoppingDetails').classList.remove('hidden');
+            else if (this.value === 'Room & Electric') { getEl('roomElectricDetails').classList.remove('hidden'); getEl('amount').readOnly = true; getEl('amount').classList.add('bg-gray-200', 'dark:bg-[#1e293b]'); }
+        });
+
+        const calcRentBill = () => { if (getEl('category').value === 'Room & Electric') { const r = parseFloat(getEl('roomRentAmt').value)||0, b = parseFloat(getEl('electricBillAmt').value)||0; getEl('amount').value = (r>0||b>0)?(r+b).toFixed(2):''; } };
+        getEl('roomRentAmt').addEventListener('input', calcRentBill); getEl('electricBillAmt').addEventListener('input', calcRentBill);
+
+        getEl('headerMonthSelect').addEventListener('change', () => { getEl('filterDate').value = ''; renderExpenses(); });
+        // Some mobile date pickers emit input before change, so refresh on both.
+        getEl('filterDate').addEventListener('input', renderExpenses);
+        getEl('filterDate').addEventListener('change', renderExpenses);
+        getEl('filterCategory').addEventListener('change', () => { renderCategoryFilterMenu(); renderExpenses(); });
+        getEl('clearDateBtn').addEventListener('click', (e) => { e.stopPropagation(); getEl('filterDate').value = ''; renderExpenses(); });
+        getEl('clearCatBtn').addEventListener('click', (e) => { e.stopPropagation(); getEl('filterCategory').value = 'All'; renderCategoryFilterMenu(); renderExpenses(); });
+        getEl('resetAllFiltersBtn').addEventListener('click', () => { getEl('filterDate').value = ''; getEl('filterCategory').value = 'All'; renderCategoryFilterMenu(); renderExpenses(); });
+
+        const htmlElement = document.documentElement;
+        if (localStorage.getItem('myExpenseTheme') === 'dark' || (!('myExpenseTheme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { htmlElement.classList.add('dark'); getEl('darkModeToggle').innerText = '☀️'; }
+        getEl('darkModeToggle').addEventListener('click', () => {
+            if (htmlElement.classList.contains('dark')) { htmlElement.classList.remove('dark'); localStorage.setItem('myExpenseTheme', 'light'); getEl('darkModeToggle').innerText = '🌙'; } 
+            else { htmlElement.classList.add('dark'); localStorage.setItem('myExpenseTheme', 'dark'); getEl('darkModeToggle').innerText = '☀️'; }
+        });
+
+        getEl('snapTabMonths').addEventListener('click', () => { getEl('snapshotMonthsView').classList.remove('hidden'); getEl('snapshotCategoriesView').classList.add('hidden'); });
+        getEl('snapTabCategories').addEventListener('click', () => { getEl('snapshotCategoriesView').classList.remove('hidden'); getEl('snapshotMonthsView').classList.add('hidden'); });
+
+        // 🔴 RENDER METHOD 🔴
+        function renderExpenses() {
+            const activeExp = getActiveExpenses();
+            const tb = getEl('expenseTableBody'); tb.innerHTML = '';
+            
+            const monthsSet = new Set(); activeExp.forEach(exp => { if (exp.date) monthsSet.add(exp.date.slice(0, 7)); });
+            const sorted = Array.from(monthsSet).sort((a, b) => b.localeCompare(a));
+            
+            let targetVal = getEl('headerMonthSelect').value;
+            if (isFirstLoad) { const saved = localStorage.getItem('myExpenseLastMonth'); targetVal = (saved && (saved === 'All' || sorted.includes(saved))) ? saved : (sorted.length > 0 ? sorted[0] : "All"); isFirstLoad = false; }
+            getEl('headerMonthSelect').innerHTML = `<option value="All" class="dark:bg-gray-800">All Months</option>`;
+            sorted.forEach(ym => { const obj = new Date(ym + "-01"); getEl('headerMonthSelect').innerHTML += `<option value="${ym}" class="dark:bg-gray-800">${obj.toLocaleString('default',{month:'short',year:'numeric'})}</option>`; });
+            
+            if (getEl('filterDate').value && getEl('filterDate').value.slice(0,7) === targetVal) getEl('headerMonthSelect').value = targetVal;
+            else if (targetVal === "All" || sorted.includes(targetVal)) getEl('headerMonthSelect').value = targetVal;
+            else if (sorted.length > 0) { getEl('headerMonthSelect').value = sorted[0]; localStorage.setItem('myExpenseLastMonth', sorted[0]); } 
+            else getEl('headerMonthSelect').value = "All";
+
+            let monthExp = activeExp;
+            if (getEl('filterDate').value) monthExp = activeExp.filter(e => e.date === getEl('filterDate').value);
+            else if (getEl('headerMonthSelect').value !== "All") monthExp = activeExp.filter(e => e.date.startsWith(getEl('headerMonthSelect').value));
+
+            let breakdownLabel = "All Months";
+            if (getEl('filterDate').value) breakdownLabel = getEl('filterDate').value.split('-').reverse().join('/'); 
+            else if (getEl('headerMonthSelect').value !== 'All') breakdownLabel = new Date(getEl('headerMonthSelect').value+"-01").toLocaleString('default',{month:'long',year:'numeric'});
+            getEl('currentSelectedMonthLabel').innerText = breakdownLabel;
+
+            const mData = {}; activeExp.forEach(exp => { const mYear = new Date(exp.date||new Date()).toLocaleString('default', { month: 'short', year: 'numeric' }); if (!mData[mYear]) mData[mYear] = { inc: 0, exp: 0 }; if (exp.txType === 'income') mData[mYear].inc += parseFloat(exp.amount || 0); else mData[mYear].exp += parseFloat(exp.amount || 0); });
+            const sortedM = Object.keys(mData).sort((a, b) => new Date(b) - new Date(a));
+            getEl('monthlySummaryContainer').innerHTML = '';
+            if (sortedM.length === 0) getEl('monthlySummaryContainer').innerHTML = '<p class="text-white/80 text-xs">No transactions.</p>';
+            else {
+                sortedM.forEach(m => {
+                    const net = mData[m].inc - mData[m].exp;
+                    getEl('monthlySummaryContainer').innerHTML += `<div class="bg-white/10 border border-white/20 p-2 rounded-xl flex flex-col items-center min-w-[140px] shrink-0"><span class="text-[10px] text-blue-100 font-bold uppercase">${m}</span><div class="w-full flex justify-between text-[10px] mt-1 font-semibold"><span class="text-green-300">+₹${formatINR(mData[m].inc)}</span><span class="text-red-300">-₹${formatINR(mData[m].exp)}</span></div><div class="mt-1 pt-1 border-t border-white/20 w-full text-center"><span class="text-sm font-extrabold ${net >= 0 ? 'text-white' : 'text-red-200'}">₹${formatINR(net)}</span></div></div>`;
+                });
+            }
+
+            getEl('categoryBreakdownContainer').innerHTML = '';
+            const catTots = {}; let mTotExp = 0; 
+            monthExp.forEach(e => { if (e.txType !== 'income') { const cName = e.category || 'Other'; catTots[cName] = (catTots[cName]||0)+parseFloat(e.amount || 0); mTotExp += parseFloat(e.amount || 0); } });
+            Object.keys(catTots).sort((a,b)=>catTots[b]-catTots[a]).forEach(c => {
+                const pct = mTotExp > 0 ? ((catTots[c]/mTotExp)*100).toFixed(1) : 0;
+                getEl('categoryBreakdownContainer').innerHTML += `<div class="space-y-1"><div class="flex justify-between text-[10px] font-semibold text-white/90"><span>${c}</span><span>₹${formatINR(catTots[c])} (${pct}%)</span></div><div class="w-full bg-black/30 rounded-full h-1"><div class="bg-white/90 h-1 rounded-full" style="width: ${pct}%"></div></div></div>`;
+            });
+            if(mTotExp===0) getEl('categoryBreakdownContainer').innerHTML = '<p class="text-[10px] text-white/60">No expenses.</p>';
+            
+            // Budget Update
+            let pct = (mTotExp / monthlyBudget) * 100; let displayPct = pct > 100 ? 100 : pct;
+            getEl('budgetPercentage').innerText = `${pct.toFixed(1)}%`; getEl('budgetProgressBar').style.width = `${displayPct}%`;
+            if(pct < 70) getEl('budgetProgressBar').className = "bg-blue-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(96,165,250,0.5)] transition-all";
+            else if(pct < 95) getEl('budgetProgressBar').className = "bg-yellow-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(250,204,21,0.6)] transition-all";
+            else getEl('budgetProgressBar').className = "bg-red-500 h-1.5 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.9)] transition-all";
+
+            let finExp = getEl('filterCategory').value !== 'All' ? monthExp.filter(e => sameCategory(e.category, getEl('filterCategory').value)) : monthExp;
+            
+            // Show a clear total for the exact date selected in the transaction filter.
+            // This is display-only and does not alter the saved transaction data.
+            const selectedDate = getEl('filterDate').value;
+            const dateTotalDisp = getEl('dateTotalDisplay');
+            if (selectedDate) {
+                let dateIncome = 0, dateExpense = 0;
+                monthExp.forEach(e => {
+                    const amount = parseFloat(e.amount || 0);
+                    if (e.txType === 'income') dateIncome += amount;
+                    else dateExpense += amount;
+                });
+                const dateNet = dateIncome - dateExpense;
+                dateTotalDisp.innerText = `Total AMT: ₹${formatINR(dateIncome + dateExpense)}  •  Net: ${dateNet < 0 ? '-' : '+'}₹${formatINR(Math.abs(dateNet))}`;
+                dateTotalDisp.classList.remove('hidden');
+            } else {
+                dateTotalDisp.classList.add('hidden');
+            }
+            
+            totalCashBalance = 0; totalOnlineBalance = 0;
+            activeExp.forEach(e => { let m = e.paymentMode || 'online'; let a = parseFloat(e.amount || 0); if (e.txType === 'income') { if(m==='cash') totalCashBalance+=a; else totalOnlineBalance+=a; } else { if(m==='cash') totalCashBalance-=a; else totalOnlineBalance-=a; } });
+            currentTotalBalance = totalCashBalance + totalOnlineBalance;
+            
+            if(!isBalanceHidden) {
+                getEl('currentMonthExpense').innerText = `₹${formatINR(currentTotalBalance)}`; getEl('currentMonthExpense').className = currentTotalBalance >= 0 ? "text-green-600 dark:text-green-400 font-black text-sm sm:text-base whitespace-nowrap" : "text-red-600 dark:text-red-400 font-black text-sm sm:text-base whitespace-nowrap";
+                getEl('cashBalDisplay').innerText = `₹${formatINR(totalCashBalance)}`; getEl('onlineBalDisplay').innerText = `₹${formatINR(totalOnlineBalance)}`;
+            }
+
+            if (getEl('filterDate').value) { getEl('dateFilterText').innerText = getEl('filterDate').value.split('-').reverse().join('/'); getEl('clearDateBtn').classList.remove('hidden'); } 
+            else { getEl('dateFilterText').innerText = "DATE"; getEl('clearDateBtn').classList.add('hidden'); }
+
+            if (getEl('filterCategory').value !== 'All') {
+                getEl('clearCatBtn').classList.remove('hidden'); let cTotInc = 0, cTotExp = 0; finExp.forEach(e => { if(e.txType === 'income') cTotInc += parseFloat(e.amount || 0); else cTotExp += parseFloat(e.amount || 0); });
+                const catTotalDisp = getEl('categoryTotalDisplay');
+                if (cTotInc > 0 && cTotExp === 0) catTotalDisp.innerText = `${getEl('filterCategory').value}: +₹${formatINR(cTotInc)}`;
+                else if (cTotExp > 0 && cTotInc === 0) catTotalDisp.innerText = `${getEl('filterCategory').value}: -₹${formatINR(cTotExp)}`;
+                else catTotalDisp.innerText = `${getEl('filterCategory').value}: ₹${formatINR(cTotInc - cTotExp)}`;
+                catTotalDisp.classList.remove('hidden');
+            } else { getEl('clearCatBtn').classList.add('hidden'); getEl('categoryTotalDisplay').classList.add('hidden'); }
+
+            if (getEl('filterDate').value || getEl('filterCategory').value !== 'All') getEl('resetAllFiltersBtn').classList.remove('hidden');
+            else getEl('resetAllFiltersBtn').classList.add('hidden');
+
+            if(finExp.length === 0) { tb.innerHTML = '<tr><td colspan="6" class="text-center py-6 text-[10px] text-gray-500">No transactions.</td></tr>'; return; }
+            getEl('selectAllCheckbox').checked = finExp.every(e => e.verified === true || e.verified === 1);
+
+            finExp.sort((a,b) => (b.date||"").localeCompare(a.date||"") || new Date(b.timestamp||0)-new Date(a.timestamp||0)).forEach(exp => {
+                try {
+                    let isInc = exp.txType === 'income'; let dt = exp.date ? exp.date.split('-').reverse().join('/').substring(0,8) : '';
+                    let vState = (exp.verified===true||exp.verified===1)?1:(exp.verified===2||String(exp.verified).toLowerCase()==='disputed'?2:0);
+                    let rowClass = "hover:bg-gray-100/50 dark:hover:bg-[#334155]/50 transition cursor-pointer border-l-2 sm:border-l-4 "; let icn = "";
+                    if (vState === 1) { rowClass += "border-blue-500 opacity-80 bg-blue-50/60 dark:bg-blue-900/30"; icn = `<div class="w-3 h-3 mx-auto rounded bg-blue-500 text-white text-[9px] flex items-center justify-center pointer-events-none">✓</div>`; } 
+                    else if (vState === 2) { rowClass += "border-orange-500 bg-orange-50 dark:bg-orange-900/40"; icn = `<div class="w-3 h-3 mx-auto rounded bg-orange-500 text-white text-[9px] flex items-center justify-center pointer-events-none">!</div>`; } 
+                    else { rowClass += "border-transparent hover:border-gray-400"; icn = `<div class="w-3 h-3 mx-auto rounded border border-gray-400 pointer-events-none"></div>`; }
+                    
+                    let modeTag = (exp.paymentMode||'online') === 'cash' ? `<span title="Cash payment" aria-label="Cash payment" class="inline-flex h-5 w-5 items-center justify-center rounded-md bg-emerald-50 dark:bg-emerald-900/40 text-[11px] border border-emerald-200 dark:border-emerald-800">💵</span>` : `<span title="Online payment" aria-label="Online payment" class="inline-flex h-5 w-5 items-center justify-center rounded-md bg-blue-50 dark:bg-blue-900/40 text-[11px] border border-blue-200 dark:border-blue-800">📱</span>`;
+                    let dHTML = `<div class="flex items-start gap-1.5"><span class="shrink-0 pt-0.5">${modeTag}</span><div class="min-w-0 flex-1"><div class="font-bold text-xs">${exp.description||''}</div><div class="flex flex-wrap gap-1 mt-1">`;
+                    
+                    if(exp.category === 'Shopping' || exp.category === 'Taklu - Shopping') {
+                        if(exp.shoppingItems) exp.shoppingItems.forEach(i => dHTML+=`<span class="bg-gray-100 dark:bg-gray-800 px-1 rounded text-gray-700 dark:text-gray-300 border border-gray-200 text-[8px]">🛒 ${i.name} (${i.qty}${i.unit})</span>`);
+                        else if(exp.shopItem) dHTML+=`<span class="bg-gray-100 dark:bg-gray-800 px-1 rounded text-gray-700 dark:text-blue-300 border border-gray-200 text-[8px]">🛒 ${exp.shopItem} (${exp.shopQty}${exp.shopUnit})</span>`;
+                    }
+                    dHTML += `</div></div></div>`;
+                    if(exp.category === 'Room & Electric') dHTML += `<div class="text-[9px] mt-1 flex gap-1">${parseFloat(exp.roomRentAmt)>0 ? `<span class="bg-gray-100 dark:bg-[#334155] px-1.5 rounded text-gray-600 dark:text-gray-300">🏠 ₹${exp.roomRentAmt}</span>`:''} ${parseFloat(exp.electricBillAmt)>0 ? `<span class="bg-gray-100 dark:bg-[#334155] px-1.5 rounded text-gray-600 dark:text-gray-300">⚡ ₹${exp.electricBillAmt}</span>`:''}</div>`;
+                    if(exp.receiptBase64) dHTML += `<div class="mt-1"><button onclick="window.viewReceipt('${exp.receiptBase64}')" class="text-[9px] bg-indigo-50 dark:bg-indigo-900/50 text-indigo-700 px-1.5 rounded-full font-bold">📎 Bill</button></div>`;
+
+                    let tr = document.createElement('tr'); tr.className = rowClass; tr.setAttribute('onclick', `window.toggleRowVerify('${exp.id}', ${vState}, event)`);
+                    tr.innerHTML = `<td class="px-1 py-2 align-top text-center pt-3">${icn}</td><td class="px-1 py-2 align-top"><div class="bg-gray-100 dark:bg-[#334155] font-bold px-1.5 rounded text-[9px] border border-gray-200 inline-block">📅 ${dt}</div></td><td class="px-1 py-2 align-top max-w-[110px] break-words">${dHTML}</td><td class="px-1 py-2 align-top"><span class="${isInc?'bg-green-50 text-green-600':'bg-gray-50 dark:bg-gray-800 text-gray-500'} px-1 py-0.5 rounded text-[8px] uppercase font-bold border">${getCategoryDisplayName(exp.category||'Other').replace('Taklu - ','')}</span></td><td class="px-2 py-2 text-left font-extrabold align-top text-xs ${isInc?'text-green-600':'text-red-500'}">${isInc?'+':'-'}₹${formatINR(exp.amount)}</td><td class="px-2 py-2 align-top text-left"><div class="flex flex-col items-start gap-1"><button onclick="window.openEditModal('${exp.id}')" class="text-blue-500 text-xs">✏️</button><button onclick="window.deleteExpense('${exp.id}')" class="text-red-500 font-bold text-base">&times;</button></div></td>`;
+                    tb.appendChild(tr);
+                } catch(e) { console.error("Skipped bad entry", exp); } 
+            });
+        }
+
+        // The former Universal Tracker view has been removed; transactions remain the single workspace.
+        function renderItemHistory() {
+            const query = getEl('searchItemInput').value.toLowerCase().trim(); const dateQuery = getEl('universalDateFilter').value;
+            const table = getEl('itemHistoryTableBody'); table.innerHTML = '';
+            
+            if (query === '' && dateQuery === '') {
+                table.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-[10px] text-gray-500">Search text or pick a date...</td></tr>'; getEl('universalTotalDisplay').innerText = `Total: ₹0.00`; return;
+            }
+            let foundItems = []; let sourceExpenses = getActiveExpenses();
+            if (dateQuery) sourceExpenses = sourceExpenses.filter(e => e.date === dateQuery);
+
+            sourceExpenses.forEach(exp => {
+                try {
+                    const desc = (exp.description || '').toLowerCase(); const cat = (exp.category || '').toLowerCase();
+                    const matchDesc = query === '' ? true : (desc.includes(query) || cat.includes(query));
+                    const typeMult = exp.txType === 'income' ? 1 : -1;
+
+                    if (exp.category === 'Shopping' || exp.category === 'Taklu - Shopping') {
+                        let pushedAny = false;
+                        if (exp.shoppingItems && exp.shoppingItems.length > 0) {
+                            exp.shoppingItems.forEach(item => { if (query === '' || (item.name||'').toLowerCase().includes(query) || matchDesc) { foundItems.push({ expId: exp.id, date: exp.date, timestamp: exp.timestamp, name: item.name, details: `${item.qty} ${item.unit}`, amount: exp.amount, txType: exp.txType, mult: typeMult, context: exp.description }); pushedAny = true; } });
+                        } else if (exp.shopItem) {
+                            if (query === '' || (exp.shopItem||'').toLowerCase().includes(query) || matchDesc) { foundItems.push({ expId: exp.id, date: exp.date, timestamp: exp.timestamp, name: exp.shopItem, details: `${exp.shopQty} ${exp.shopUnit}`, amount: exp.amount, txType: exp.txType, mult: typeMult, context: exp.description }); pushedAny = true; }
+                        }
+                        if (!pushedAny && matchDesc) foundItems.push({ expId: exp.id, date: exp.date, timestamp: exp.timestamp, name: exp.description, details: 'Bill', amount: exp.amount, txType: exp.txType, mult: typeMult, context: '' });
+                    } else {
+                        if (matchDesc) {
+                            let det = exp.category; if (exp.category === 'Room & Electric') det = `Rent: ₹${exp.roomRentAmt||0} | Bill: ₹${exp.electricBillAmt||0}`;
+                            foundItems.push({ expId: exp.id, date: exp.date, timestamp: exp.timestamp, name: exp.description, details: det, amount: exp.amount, txType: exp.txType, mult: typeMult, context: '' });
+                        }
+                    }
+                } catch(e) {}
+            });
+
+            foundItems.sort((a, b) => (b.date||"").localeCompare(a.date||"") || new Date(b.timestamp||0) - new Date(a.timestamp||0));
+            
+            let universalTotal = 0; let addedExpIds = new Set(); 
+            if (foundItems.length === 0) { table.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-[10px] text-gray-500">No records found.</td></tr>'; getEl('universalTotalDisplay').innerText = `Total: ₹0.00`; return; }
+
+            foundItems.forEach(item => {
+                if (!addedExpIds.has(item.expId)) { universalTotal += (parseFloat(item.amount || 0) * item.mult); addedExpIds.add(item.expId); }
+                const row = document.createElement('tr'); row.className = "border-b border-gray-200 hover:bg-gray-100 dark:border-gray-700";
+                row.innerHTML = `<td class="px-1.5 py-2.5"><span class="bg-indigo-100 text-indigo-700 font-bold px-1.5 py-0.5 rounded text-[9px]">📅 ${(item.date||'').split('-').reverse().join('/')}</span></td><td class="px-1 py-2.5 font-semibold text-xs">${item.name||''} <div class="text-[9px] text-gray-400">${item.context?"Context: "+item.context:""}</div></td><td class="px-1 py-2.5 text-gray-500 text-[10px]">${item.details||''}</td><td class="px-2 py-2.5 text-left ${item.txType === 'income' ? 'text-green-600' : 'text-red-500'} font-bold text-xs">${item.txType === 'income' ? '+' : '-'}₹${formatINR(item.amount)}</td><td class="px-2 py-2.5 text-left"><div class="flex flex-col items-start"><button onclick="window.openEditModal('${item.expId}')" class="text-blue-500 text-xs">✏️</button><button onclick="window.deleteExpense('${item.expId}')" class="text-red-500 font-bold text-base">&times;</button></div></td>`;
+                table.appendChild(row);
+            });
+            getEl('universalTotalDisplay').innerText = `Net: ₹${formatINR(universalTotal)}`;
+            getEl('universalTotalDisplay').className = universalTotal >= 0 ? "bg-green-50 text-green-700 border border-green-200 text-[11px] font-bold px-3 py-2 rounded-lg" : "bg-red-50 text-red-700 border border-red-200 text-[11px] font-bold px-3 py-2 rounded-lg";
+        }
+
+        // STRICT ONLINE SUBMISSION
+        getEl('expenseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!navigator.onLine) { alert("Internet Required! You must be online to save a transaction."); return; }
+            const btn = getEl('submitBtn'); btn.innerText = "Saving..."; btn.disabled = true;
+            let sArr = [];
+            if (getEl('category').value === 'Shopping' || getEl('category').value === 'Taklu - Shopping') {
+                document.querySelectorAll('.shopping-item-row').forEach(r => { const n=r.querySelector('.shop-item-name').value; if(n.trim()) sArr.push({name:n, qty:r.querySelector('.shop-item-qty').value||"1", unit:r.querySelector('.shop-item-unit').value}); });
+            }
+            let b64 = ""; if(getEl('receiptFile').files[0]) b64 = await new Promise(r => { const f=new FileReader(); f.onload=e=>r(e.target.result); f.readAsDataURL(getEl('receiptFile').files[0]); });
+            
+            firebase.firestore().collection("my_personal_expenses").add({
+                appMode: currentAppMode, txType: document.querySelector('input[name="txType"]:checked').value, paymentMode: document.querySelector('input[name="paymentMode"]:checked').value, 
+                date: getEl('date').value, description: getEl('description').value, category: getEl('category').value, amount: getEl('amount').value,
+                shoppingItems: sArr, roomRentAmt: getEl('category').value==='Room & Electric'?getEl('roomRentAmt').value:"", electricBillAmt: getEl('category').value==='Room & Electric'?getEl('electricBillAmt').value:"", electricBillUnit: getEl('category').value==='Room & Electric'?getEl('electricBillUnit').value:"",
+                receiptBase64: b64, timestamp: new Date().toISOString(), verified: 0 
+            }).then(() => {
+                const d = getEl('date').value; getEl('expenseForm').reset(); getEl('date').value = d;
+                getEl('shoppingDetails').classList.add('hidden'); getEl('roomElectricDetails').classList.add('hidden');
+                getEl('amount').readOnly = false; getEl('amount').classList.remove('bg-gray-200','dark:bg-[#1e293b]');
+                document.querySelector(`input[name="txType"][value="${document.querySelector('input[name="txType"]:checked').value}"]`).checked = true;
+                updateCategoryUI(); getEl('headerMonthSelect').value = d.slice(0, 7); localStorage.setItem('myExpenseLastMonth', d.slice(0, 7));
+                btn.innerText = "Save Transaction"; btn.disabled = false; triggerSync();
+            }).catch(err => { console.error(err); btn.innerText = "Save Transaction"; btn.disabled = false; alert("Failed to save."); });
+        });
+
+        window.deleteExpense = function(id) { 
+            if (!navigator.onLine) { alert("Internet required to delete."); return; }
+            if(confirm("Delete this transaction?")) firebase.firestore().collection("my_personal_expenses").doc(id).delete(); 
+        }
+        window.viewReceipt = function(b64) { getEl('modalImage').src = b64; getEl('imageModal').classList.remove('hidden'); }
+        
+        window.openEditModal = function(id) {
+            const exp = allExpenses.find(e => e.id === id); if(!exp) return;
+            getEl('editDocId').value = exp.id;
+            getEl('editTypeIncome').checked = exp.txType === 'income'; getEl('editTypeExpense').checked = exp.txType !== 'income';
+            getEl('editPaymentCash').checked = exp.paymentMode === 'cash'; getEl('editPaymentOnline').checked = exp.paymentMode !== 'cash';
+            updateCategoryUI('edit');
+            getEl('editDate').value = exp.date; getEl('editDescription').value = exp.description; getEl('editCategory').value = exp.category || 'Other'; getEl('editAmount').value = exp.amount;
+            getEl('editModal').classList.remove('hidden');
+        }
+
+        getEl('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!navigator.onLine) { alert("Internet required to edit."); return; }
+            const btn = getEl('saveEditBtn'); btn.innerText = "Saving..."; btn.disabled = true;
+            firebase.firestore().collection("my_personal_expenses").doc(getEl('editDocId').value).update({
+                txType: document.querySelector('input[name="editTxType"]:checked').value, paymentMode: document.querySelector('input[name="editPaymentMode"]:checked').value, 
+                date: getEl('editDate').value, description: getEl('editDescription').value, category: getEl('editCategory').value, amount: getEl('editAmount').value
+            }).then(() => { getEl('editModal').classList.add('hidden'); btn.innerText = "Save Changes"; btn.disabled = false; })
+            .catch(e => { console.error(e); btn.innerText = "Save Changes"; btn.disabled = false; });
+        });
+
+        getEl('addShoppingItemBtn').addEventListener('click', () => {
+            const row = document.createElement('div'); row.className = "shopping-item-row flex flex-col gap-1.5 pt-3 border-t border-blue-100 relative";
+            row.innerHTML = `<button type="button" class="absolute top-1 right-0 text-red-400 hover:text-red-600 font-bold text-xl leading-none" onclick="this.parentElement.remove()">&times;</button><input type="text" list="itemSuggestions" placeholder="Item Name" class="shop-item-name block w-11/12 rounded-md border-gray-300 shadow-sm p-1.5 text-[11px] bg-white outline-none"><div class="flex gap-1.5"><input type="number" step="0.01" placeholder="Qty" class="shop-item-qty block w-1/2 rounded-md border-gray-300 shadow-sm p-1.5 text-[11px] bg-white outline-none"><select class="shop-item-unit block w-1/2 rounded-md border-gray-300 shadow-sm p-1.5 text-[11px] bg-white outline-none"><option value="kg">kg</option><option value="gram">gram</option><option value="liter">liter</option><option value="pcs">pcs</option><option value="packet">packet</option></select></div>`;
+            getEl('shoppingItemsContainer').appendChild(row);
+        });
+
+        getEl('exportCsvBtn').addEventListener('click', () => {
+            const activeExp = getActiveExpenses(); let exportData = activeExp;
+            if (getEl('filterDate').value) exportData = exportData.filter(e => e.date === getEl('filterDate').value);
+            else if (getEl('headerMonthSelect').value !== "All") exportData = exportData.filter(e => e.date.startsWith(getEl('headerMonthSelect').value));
+            if (getEl('filterCategory').value !== 'All') exportData = exportData.filter(e => sameCategory(e.category, getEl('filterCategory').value));
+            if(exportData.length === 0) return alert("No transactions to export.");
+
+            let csvContent = "data:text/csv;charset=utf-8,Date,Type,Payment Mode,Category,Description,Amount(INR),Additional Details\n";
+            exportData.sort((a,b) => (b.date||"").localeCompare(a.date||"") || new Date(b.timestamp||0)-new Date(a.timestamp||0)).forEach(exp => {
+                let det = "";
+                if(exp.category === 'Shopping' || exp.category === 'Taklu - Shopping') { if (exp.shoppingItems) det = exp.shoppingItems.map(i => `${i.name} (${i.qty} ${i.unit})`).join(" | "); else if(exp.shopItem) det = `${exp.shopItem} (${exp.shopQty} ${exp.shopUnit})`; }
+                else if(exp.category === 'Room & Electric') det = `Rent: ${exp.roomRentAmt||0} | Bill: ${exp.electricBillAmt||0} | Unit: ${exp.electricBillUnit||0}`;
+                csvContent += `${exp.date||''},${exp.txType==='income'?'Income':'Expense'},${exp.paymentMode==='cash'?'Cash':'Online'},${exp.category||'Other'},${(exp.description||"").replace(/,/g," ")},${exp.amount||0},${det.replace(/,/g," ")}\n`;
+            });
+            var link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", `Expense_Report_${currentAppMode}.csv`);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        });
+    </script>
+</body>
+</html>
