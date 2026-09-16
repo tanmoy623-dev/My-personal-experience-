@@ -458,7 +458,7 @@
                                                     <button id="clearCatBtn" type="button" class="hidden ml-1 text-red-500 font-bold text-xs p-0.5">✕</button>
                                                 </div>
                                             </th>
-                                            <th class="px-2 py-2.5 text-left text-[10px]">AMT</th>
+                                            <th class="px-2 py-2.5 text-left text-[10px]"><div id="amtHeaderLabel">AMT</div><div id="amtSelectedTotal" class="hidden text-[9px] text-emerald-500 font-extrabold mt-0.5 whitespace-nowrap"></div></th>
                                             <th class="px-2 py-2.5 text-left text-[10px]">ACT</th>
                                         </tr>
                                     </thead>
@@ -973,7 +973,37 @@
             if (getEl('filterDate').value || getEl('filterCategory').value !== 'All') getEl('resetAllFiltersBtn').classList.remove('hidden');
             else getEl('resetAllFiltersBtn').classList.add('hidden');
 
-            if(finExp.length === 0) { tb.innerHTML = '<tr><td colspan="6" class="text-center py-6 text-[10px] text-gray-500">No transactions.</td></tr>'; return; }
+            if(finExp.length === 0) {
+                tb.innerHTML = '<tr><td colspan="6" class="text-center py-6 text-[10px] text-gray-500">No transactions.</td></tr>';
+                const amtSelectedTotalEmpty = getEl('amtSelectedTotal');
+                if (amtSelectedTotalEmpty) { amtSelectedTotalEmpty.innerText = ''; amtSelectedTotalEmpty.classList.add('hidden'); }
+                return;
+            }
+
+            // Show the total amount of currently selected (verified/blue-check) transactions inside the AMT header.
+            const selectedExpenses = finExp.filter(e => e.verified === true || e.verified === 1);
+            const selectedAmountTotal = selectedExpenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+            const amtSelectedTotal = getEl('amtSelectedTotal');
+            if (amtSelectedTotal) {
+                if (selectedExpenses.length > 0) {
+                    amtSelectedTotal.innerText = `Σ ₹${formatINR(selectedAmountTotal)}`;
+                    amtSelectedTotal.classList.remove('hidden');
+                } else {
+                    amtSelectedTotal.innerText = '';
+                    amtSelectedTotal.classList.add('hidden');
+                }
+            }
+            const selectedTotalBadge = getEl('selectedTotalDisplay');
+            if (selectedTotalBadge) {
+                if (selectedExpenses.length > 0) {
+                    selectedTotalBadge.innerText = `Selected: ₹${formatINR(selectedAmountTotal)}`;
+                    selectedTotalBadge.classList.remove('hidden');
+                } else {
+                    selectedTotalBadge.innerText = '';
+                    selectedTotalBadge.classList.add('hidden');
+                }
+            }
+
             getEl('selectAllCheckbox').checked = finExp.every(e => e.verified === true || e.verified === 1);
 
             finExp.sort((a,b) => (b.date||"").localeCompare(a.date||"") || new Date(b.timestamp||0)-new Date(a.timestamp||0)).forEach(exp => {
