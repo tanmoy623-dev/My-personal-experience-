@@ -13,8 +13,7 @@
     <style>
         .hide-scroll-bar::-webkit-scrollbar { display: none; }
         .hide-scroll-bar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Modern interface layer — IDs, data bindings and JavaScript remain unchanged. */
+        /* Modern interface layer */
         :root { color-scheme: light; }
         html { background: #f5f7fb; }
         body { min-height: 100vh; background:
@@ -27,9 +26,7 @@
         ::selection { background: rgba(59,130,246,.25); }
         button, select, input { -webkit-tap-highlight-color: transparent; }
         button { transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease !important; }
-        button:not(:disabled):active { transform: translateY(1px) scale(.985); }
         button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid rgba(59,130,246,.25) !important; outline-offset: 2px; }
-
         #mainAppWrapper { padding-top: 1.35rem !important; }
         #mainAppWrapper > div { max-width: 76rem !important; }
         header { padding: .35rem 0 .7rem; }
@@ -38,12 +35,10 @@
         #darkModeToggle, header button[onclick] { border-radius: .85rem !important; min-width: 2.6rem; }
         #headerMonthSelect { min-width: 5.8rem; }
         #balanceToggleBtn { min-height: 2.55rem; }
-
         #sync-dot { box-shadow: 0 0 0 4px rgba(148,163,184,.14); }
         #manualSyncBtn { border-radius: .7rem !important; }
         #modeDay2DayBtn, #modeMedicalBtn { min-height: 2.9rem; }
         #modeDay2DayBtn { box-shadow: 0 5px 14px rgba(15,23,42,.10) !important; }
-
         /* Cards, fields, and panels */
         #mainAppWrapper .bg-white, #mainAppWrapper .dark\\:bg-\\[\#1e293b\] { border-radius: 1rem; }
         #mainAppWrapper .shadow-md { box-shadow: 0 12px 32px rgba(15,23,42,.07) !important; }
@@ -61,7 +56,6 @@
         #submitBtn, #saveEditBtn { border-radius: .78rem !important; min-height: 2.85rem; box-shadow: 0 8px 17px rgba(37,99,235,.25) !important; }
         #submitBtn:hover, #saveEditBtn:hover { box-shadow: 0 11px 22px rgba(37,99,235,.32) !important; transform: translateY(-1px); }
         #shoppingDetails, #roomElectricDetails { border-radius: .85rem !important; }
-
         /* Dashboard and data views */
         #mainAppWrapper .bg-gradient-to-br { border-radius: 1.25rem !important; box-shadow: 0 16px 34px rgba(67,56,202,.24) !important; }
         #monthlySummaryContainer > * { flex: 0 0 auto; }
@@ -69,740 +63,138 @@
         #monthlySummaryContainer::-webkit-scrollbar-thumb { background: rgba(255,255,255,.35); border-radius: 99px; }
         #snapTabMonths, #snapTabCategories { min-height: 1.8rem; }
         #tabTransactionsBtn, #tabItemHistoryBtn { padding: .1rem .15rem .6rem !important; }
-        #tabTransactionsBtn.border-blue-600, #tabItemHistoryBtn.border-blue-600 { color: #2563eb !important; border-width: 3px !important; }
-        .dark #tabTransactionsBtn.border-blue-600, .dark #tabItemHistoryBtn.border-blue-600 { color: #93c5fd !important; }
         #tabTransactionsView, #tabItemHistoryView { border-radius: .95rem; }
-        #filterDate, #filterCategory, #universalDateFilter, #searchItemInput { border-radius: .7rem !important; }
-        /* Keep native category dropdown options readable in both themes. */
-        #filterCategory option, #filterCategory optgroup { background: #ffffff; color: #1e293b; }
-        .dark #filterCategory { color-scheme: dark; color: #e2e8f0 !important; }
-        .dark #filterCategory option, .dark #filterCategory optgroup { background: #1e293b !important; color: #f8fafc !important; }
-        .dark #filterCategory option:checked { background: #2563eb !important; color: #ffffff !important; }
-        table { border-collapse: separate !important; border-spacing: 0 4px !important; }
+        #filterDate, #filterCategory { border-radius: .7rem !important; }
+        /* Desktop Table Styles */
+        table { border-collapse: separate !important; border-spacing: 0 4px !important; width: 100%; }
         thead tr { background: transparent !important; }
         tbody tr { box-shadow: 0 2px 8px rgba(15,23,42,.025); }
         tbody tr td:first-child { border-radius: .65rem 0 0 .65rem; }
         tbody tr td:last-child { border-radius: 0 .65rem .65rem 0; }
         tbody tr:hover { box-shadow: 0 6px 15px rgba(15,23,42,.08); transform: translateY(-1px); }
         .dark tbody tr:hover { box-shadow: 0 6px 15px rgba(0,0,0,.2); }
-        #expenseTableBody td, #itemHistoryTableBody td { border-top: 1px solid rgba(148,163,184,.10); border-bottom: 1px solid rgba(148,163,184,.10); }
-        #expenseTableBody td:first-child, #itemHistoryTableBody td:first-child { border-left: 1px solid rgba(148,163,184,.10); }
-        #expenseTableBody td:last-child, #itemHistoryTableBody td:last-child { border-right: 1px solid rgba(148,163,184,.10); }
+        #expenseTableBody td { border-top: 1px solid rgba(148,163,184,.10); border-bottom: 1px solid rgba(148,163,184,.10); padding: 8px; }
+        #expenseTableBody td:first-child { border-left: 1px solid rgba(148,163,184,.10); }
+        #expenseTableBody td:last-child { border-right: 1px solid rgba(148,163,184,.10); }
         #exportCsvBtn { border-radius: .7rem !important; }
-
-        /* Overlay experiences */
+        /* Modals & Overlays */
         #pinScreen { background: radial-gradient(circle at 50% 0%, #273f72 0, #111c34 38%, #070d1b 100%) !important; }
         #pinScreen > div { border-radius: 1.45rem !important; background: rgba(30,41,59,.88) !important; backdrop-filter: blur(18px); }
         #pinInput { border-radius: .85rem !important; }
         #unlockBtn { border-radius: .85rem !important; box-shadow: 0 10px 24px rgba(37,99,235,.32); }
-        #imageModal, #editModal, #changePinModal, #editMedicalCategoryModal { backdrop-filter: blur(7px); }
-        #imageModal > div, #editModal > div, #changePinModal > div, #editMedicalCategoryModal > div { border-radius: 1.2rem !important; box-shadow: 0 24px 60px rgba(0,0,0,.34) !important; }
+        #imageModal > div, #editModal > div, #changePinModal > div, #editMedicalCategoryModal { border-radius: 1.2rem !important; box-shadow: 0 24px 60px rgba(0,0,0,.34) !important; }
+        /* =========================================
+           🚨 MOBILE FIX (100% CLEAN - NO JUNK CODE) 🚨
+           ========================================= */
+        @media (max-width: 767px) {
+            * { box-sizing: border-box; }
+            html, body { width: 100%; max-width: 100%; overflow-x: hidden !important; }
+            body { font-size: 14px; }
+            #mainAppWrapper { width: 100% !important; padding: 10px 10px 36px !important; overflow-x: hidden !important; }
+            #mainAppWrapper > div { width: 100% !important; margin: 0 !important; }
 
-        @media (max-width: 640px) {
-            #mainAppWrapper { padding: .7rem .7rem 4rem !important; }
-            header { margin-bottom: .55rem !important; }
-            header > div:first-child { justify-content: flex-start !important; }
-            #mainAppWrapper .grid { gap: 1rem !important; }
-            #mainAppWrapper .p-4 { padding: 1rem !important; }
-            #mainAppWrapper .p-6 { padding: 1.1rem !important; }
-            #sync-text { max-width: 12rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-            #manualSyncBtn { padding-inline: .65rem !important; }
-            table { border-spacing: 0 3px !important; }
-            #expenseTableBody td, #itemHistoryTableBody td { padding-top: .6rem !important; padding-bottom: .6rem !important; }
+            /* Header & Form adjustments */
+            header { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; margin: 0 0 10px !important; padding: 0 !important; }
+            header h1 { font-size: 22px !important; line-height: 1.15 !important; }
+            header > div:nth-child(2) { display: grid !important; grid-template-columns: auto minmax(0, 1fr) !important; gap: 8px !important; }
+            header > div:nth-child(2) > div:first-child button { width: 42px !important; min-width: 42px !important; height: 42px !important; padding: 0 !important; display: grid !important; place-items: center !important; }
+            #headerMonthSelect { width: 100% !important; }
+            #balanceToggleBtn { min-width: 0 !important; flex: 1 !important; padding: 5px 8px !important; width: auto !important; max-width: none !important; }
+            #balanceToggleBtn > div > div.flex.gap-2 { flex-wrap: nowrap !important; gap: 8px !important; }
+            #balanceToggleBtn > div > div.flex.gap-2 > span { white-space: nowrap !important; display: inline-flex !important; align-items: center !important; }
+            
+            #sync-text { display: inline-block !important; font-size: 11px !important; max-width: 150px !important; white-space: normal !important; }
+            #manualSyncBtn { flex: 0 0 auto !important; padding: 7px 9px !important; }
+            #modeDay2DayBtn, #modeMedicalBtn { min-height: 44px !important; padding: 8px 7px !important; font-size: 12px !important; }
+            
+            #mainAppWrapper .grid.grid-cols-1.md\:grid-cols-3 { display: flex !important; flex-direction: column !important; gap: 10px !important; }
+            #mainAppWrapper .bg-white, #mainAppWrapper .dark\:bg-\[\#1e293b\] { max-width: 100% !important; padding: 13px !important; }
+            #expenseForm { width: 100% !important; }
+            #expenseForm input, #expenseForm select { min-height: 42px !important; font-size: 14px !important; max-width: 100% !important; }
+            #expenseForm .flex.gap-2 { align-items: stretch !important; }
+            #editCategoryBtn, #deleteCategoryBtn { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 42px !important; padding: 0 14px !important; }
+
+            /* Transaction Top Bar */
+            #tabTransactionsView { width: 100% !important; }
+            #tabTransactionsView > .flex.justify-between { flex-direction: column !important; align-items: stretch !important; gap: 7px !important; }
+            #exportCsvBtn { width: 100% !important; min-height: 40px !important; }
+
+            /* ----------------------------------------------------
+               THE STACKED CARD GENERATOR (DATE UPAR, DETAILS NICHE)
+               ---------------------------------------------------- */
+            #tabTransactionsView thead { display: none !important; }
+            
+            #tabTransactionsView table, 
+            #tabTransactionsView tbody, 
+            #expenseTableBody { 
+                display: block !important; 
+                width: 100% !important; 
+            }
+            
+            #expenseTableBody tr {
+                display: grid !important;
+                grid-template-columns: 26px 1fr auto !important;
+                grid-template-areas: 
+                    "chk date amt"
+                    "chk desc desc"
+                    "chk cat act" !important;
+                align-items: center !important;
+                gap: 8px !important;
+                padding: 12px 10px !important;
+                margin-bottom: 12px !important;
+                background: #ffffff !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 12px !important;
+                box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05) !important;
+            }
+            .dark #expenseTableBody tr { background: #1e293b !important; border-color: #334155 !important; }
+            
+            #expenseTableBody td {
+                display: block !important;
+                border: none !important;
+                padding: 0 !important;
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                text-align: left !important;
+            }
+
+            #expenseTableBody td:nth-child(1) { grid-area: chk; align-self: start; margin-top: 4px !important; }
+            #expenseTableBody td:nth-child(2) { grid-area: date; font-size: 12px !important; color: #64748b !important; }
+            
+            /* The Details section gets full space in the middle row */
+            #expenseTableBody td:nth-child(3) { 
+                grid-area: desc; 
+                font-size: 15px !important; 
+                font-weight: 700 !important; 
+                padding: 4px 0 !important; 
+                color: #0f172a !important;
+            }
+            .dark #expenseTableBody td:nth-child(3) { color: #f8fafc !important; }
+            
+            #expenseTableBody td:nth-child(4) { grid-area: cat; }
+            #expenseTableBody td:nth-child(5) { grid-area: amt; text-align: right !important; font-size: 16px !important; font-weight: 900 !important; }
+            #expenseTableBody td:nth-child(6) { grid-area: act; justify-self: end; }
+            #expenseTableBody td:nth-child(6) div { display: flex !important; gap: 15px !important; justify-content: flex-end !important; }
+            #tabTransactionsView input[type="checkbox"] { width: 18px !important; height: 18px !important; cursor: pointer !important; }   
+            /* Modals */
+            #imageModal > div, #editModal > div, #changePinModal > div, #editMedicalCategoryModal > div {
+                width: 100% !important; max-width: 100% !important; max-height: calc(100dvh - 20px) !important; padding: 14px !important;
+            }
         }
-        @media (min-width: 768px) {
-            #mainAppWrapper { padding-top: 2rem !important; }
-            #expenseForm { position: sticky; top: 1.25rem; }
+        /* Smallest screens */
+        @media (max-width: 380px) {
+            #mainAppWrapper { padding-left: 7px !important; padding-right: 7px !important; }
+            header > div:nth-child(2) { grid-template-columns: 86px minmax(0, 1fr) !important; }
         }
-    
-/* MOBILE-FIRST POLISH v2 */
-@media (max-width: 767px) {
-  * { box-sizing: border-box; }
-  html, body {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden !important;
-  }
-  body {
-    font-size: 14px;
-    -webkit-text-size-adjust: 100%;
-  }
 
-  #mainAppWrapper {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 10px 10px 36px !important;
-    overflow-x: hidden !important;
-  }
-  #mainAppWrapper > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-  }
-
-  /* Header */
-  #mainAppWrapper header {
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 10px !important;
-    margin: 0 0 10px !important;
-    padding: 0 !important;
-  }
-  #mainAppWrapper header > div:first-child {
-    width: 100% !important;
-    justify-content: center !important;
-    padding: 2px 0 !important;
-  }
-  #mainAppWrapper header h1 {
-    font-size: 22px !important;
-    line-height: 1.15 !important;
-  }
-  #mainAppWrapper header > div:nth-child(2) {
-    width: 100% !important;
-    display: grid !important;
-    grid-template-columns: auto minmax(0, 1fr) !important;
-    gap: 8px !important;
-    align-items: stretch !important;
-  }
-  #mainAppWrapper header > div:nth-child(2) > div:first-child {
-    display: flex !important;
-    gap: 6px !important;
-  }
-  #mainAppWrapper header > div:nth-child(2) > div:first-child button {
-    width: 42px !important;
-    min-width: 42px !important;
-    height: 42px !important;
-    padding: 0 !important;
-    display: grid !important;
-    place-items: center !important;
-  }
-  #mainAppWrapper #headerMonthSelect {
-    min-width: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  #mainAppWrapper #balanceToggleBtn {
-    min-width: 0 !important;
-    flex: 1 !important;
-    padding-left: 8px !important;
-  }
-  #mainAppWrapper #balanceToggleBtn .text-right {
-    min-width: 0 !important;
-  }
-
-  /* Sync */
-  #mainAppWrapper > div > div.flex.items-center.justify-between.p-2\.5 {
-    margin-bottom: 10px !important;
-    padding: 9px 10px !important;
-  }
-  #sync-text {
-    max-width: 145px !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  #manualSyncBtn {
-    flex: 0 0 auto !important;
-    padding: 7px 9px !important;
-    white-space: nowrap !important;
-  }
-
-  /* Main mode switch */
-  #mainAppWrapper #modeDay2DayBtn,
-  #mainAppWrapper #modeMedicalBtn {
-    min-height: 44px !important;
-    padding: 8px 7px !important;
-    font-size: 12px !important;
-  }
-  #mainAppWrapper .justify-center.mb-5 {
-    margin-bottom: 10px !important;
-  }
-
-  /* All panels */
-  #mainAppWrapper .grid.grid-cols-1.md\:grid-cols-3 {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-    width: 100% !important;
-  }
-  #mainAppWrapper .grid.grid-cols-1.md\:grid-cols-3 > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-  }
-  #mainAppWrapper .col-span-1.md\:col-span-2 {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-  }
-
-  /* Cards */
-  #mainAppWrapper .bg-white,
-  #mainAppWrapper .dark\:bg-\[\#1e293b\] {
-    max-width: 100% !important;
-  }
-  #mainAppWrapper .p-4,
-  #mainAppWrapper .p-6 {
-    padding: 13px !important;
-  }
-
-  /* Form */
-  #expenseForm {
-    width: 100% !important;
-  }
-  #expenseForm input,
-  #expenseForm select,
-  #expenseForm button,
-  #expenseForm textarea {
-    max-width: 100% !important;
-  }
-  #expenseForm input[type="text"],
-  #expenseForm input[type="number"],
-  #expenseForm input[type="date"],
-  #expenseForm select {
-    min-height: 42px !important;
-    font-size: 14px !important;
-  }
-  #expenseForm input[type="file"] {
-    min-height: 42px !important;
-    padding: 8px !important;
-    font-size: 11px !important;
-  }
-  #expenseForm .flex.gap-4,
-  #expenseForm .flex.gap-3 {
-    gap: 5px !important;
-  }
-  #expenseForm label {
-    min-width: 0;
-  }
-
-  /* Snapshot */
-  #mainAppWrapper [id="snapshotMonthsView"] > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: auto !important;
-  }
-  #monthlySummaryContainer {
-    gap: 8px !important;
-    padding-bottom: 3px !important;
-  }
-  #monthlySummaryContainer > * {
-    flex: 0 0 125px !important;
-    min-width: 125px !important;
-  }
-  #mainAppWrapper .relative.z-10.flex.flex-row.justify-between {
-    align-items: flex-start !important;
-  }
-
-  /* Transaction toolbar */
-  #tabTransactionsView {
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-  #tabTransactionsView > .flex.justify-between {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 7px !important;
-    width: 100% !important;
-  }
-  #tabTransactionsView > .flex.justify-between > div {
-    width: 100% !important;
-  }
-  #exportCsvBtn {
-    width: 100% !important;
-    min-height: 40px !important;
-  }
-
-  /* Mobile transaction cards: no horizontal scrolling */
-  #tabTransactionsView .overflow-x-auto {
-    overflow-x: hidden !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    border: 0 !important;
-  }
-  #tabTransactionsView table {
-    width: 100% !important;
-    min-width: 0 !important;
-    table-layout: fixed !important;
-    border-collapse: separate !important;
-    border-spacing: 0 7px !important;
-  }
-  #tabTransactionsView thead {
-    display: none !important;
-  }
-  #tabTransactionsView tbody {
-    display: block !important;
-    width: 100% !important;
-  }
-  #tabTransactionsView tbody tr {
-    display: grid !important;
-    grid-template-columns: 24px 58px minmax(0, 1fr) 62px 62px 34px !important;
-    align-items: center !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-    padding: 8px 4px !important;
-    border: 1px solid rgba(148,163,184,.18) !important;
-    border-radius: 12px !important;
-    background: rgba(255,255,255,.72) !important;
-    box-shadow: 0 2px 8px rgba(15,23,42,.05) !important;
-  }
-  .dark #tabTransactionsView tbody tr {
-    background: rgba(30,41,59,.72) !important;
-  }
-  #tabTransactionsView tbody tr td {
-    display: block !important;
-    min-width: 0 !important;
-    width: auto !important;
-    max-width: none !important;
-    padding: 4px 3px !important;
-    border: 0 !important;
-    overflow: hidden !important;
-  }
-  #tabTransactionsView tbody tr td:nth-child(1) { grid-column: 1; text-align: center; }
-  #tabTransactionsView tbody tr td:nth-child(2) { grid-column: 2; }
-  #tabTransactionsView tbody tr td:nth-child(3) { grid-column: 3; }
-  #tabTransactionsView tbody tr td:nth-child(4) { grid-column: 4; }
-  #tabTransactionsView tbody tr td:nth-child(5) { grid-column: 5; text-align: right; }
-  #tabTransactionsView tbody tr td:nth-child(6) { grid-column: 6; text-align: center; }
-
-  #tabTransactionsView tbody tr td:nth-child(2) span {
-    display: inline-block !important;
-    max-width: 100% !important;
-    font-size: 9px !important;
-    white-space: nowrap !important;
-  }
-  #tabTransactionsView tbody tr td:nth-child(3) {
-    font-size: 11px !important;
-    line-height: 1.25 !important;
-    overflow-wrap: anywhere !important;
-  }
-  #tabTransactionsView tbody tr td:nth-child(3) > div {
-    font-size: 8px !important;
-    color: #94a3b8 !important;
-  }
-  #tabTransactionsView tbody tr td:nth-child(4) span {
-    display: inline-block !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-    font-size: 8px !important;
-  }
-  #tabTransactionsView tbody tr td:nth-child(5) {
-    font-size: 11px !important;
-    font-weight: 800 !important;
-    white-space: nowrap !important;
-  }
-  #tabTransactionsView tbody tr td:nth-child(6) > div {
-    gap: 3px !important;
-    align-items: center !important;
-  }
-  #tabTransactionsView tbody tr td:nth-child(6) button {
-    line-height: 1 !important;
-    padding: 2px !important;
-  }
-  #tabTransactionsView input[type="checkbox"] {
-    width: 16px !important;
-    height: 16px !important;
-  }
-
-  /* Item history table uses same card layout */
-  #itemHistoryTableBody {
-    display: block !important;
-    width: 100% !important;
-  }
-  #itemHistoryTableBody tr {
-    display: grid !important;
-    grid-template-columns: 58px minmax(0,1fr) 52px 64px 34px !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    margin-bottom: 7px !important;
-    border: 1px solid rgba(148,163,184,.18) !important;
-    border-radius: 12px !important;
-    padding: 7px 4px !important;
-  }
-  #itemHistoryTableBody tr td {
-    min-width: 0 !important;
-    padding: 4px 3px !important;
-    border: 0 !important;
-  }
-
-  /* Modals */
-  #imageModal,
-  #editModal,
-  #changePinModal,
-  #editMedicalCategoryModal {
-    padding: 10px !important;
-  }
-  #imageModal > div,
-  #editModal > div,
-  #changePinModal > div,
-  #editMedicalCategoryModal > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    max-height: calc(100dvh - 20px) !important;
-    overflow-y: auto !important;
-    padding: 14px !important;
-  }
-
-  /* Small screens */
-  @media (max-width: 380px) {
-    #mainAppWrapper {
-      padding-left: 7px !important;
-      padding-right: 7px !important;
-    }
-    #mainAppWrapper header > div:nth-child(2) {
-      grid-template-columns: 86px minmax(0, 1fr) !important;
-    }
-    #mainAppWrapper header > div:nth-child(2) > div:first-child button {
-      width: 39px !important;
-      min-width: 39px !important;
-    }
-    #tabTransactionsView tbody tr {
-      grid-template-columns: 22px 54px minmax(0,1fr) 54px 58px 30px !important;
-      padding-left: 2px !important;
-      padding-right: 2px !important;
-    }
-    #tabTransactionsView tbody tr td {
-      padding-left: 2px !important;
-      padding-right: 2px !important;
-    }
-  }
-}
-
-</style>
-    
+        /* Form Details hiding */
+        #shoppingItemsContainer .shopping-item-row, #editShoppingItemsContainer .shopping-item-row { min-width: 0; }
+        #shoppingItemsContainer .shop-item-amount, #editShoppingItemsContainer .shop-item-amount { min-width: 0; }
+        #editShoppingDetails { max-height: 42vh; overflow-y: auto; }
+    </style>
     <!-- FIREBASE COMPAT SCRIPTS -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-<style>
-
-/* =========================================================
-   5.5-INCH MOBILE OPTIMIZATION
-   Target CSS viewport: approx. 360–375px
-   Keeps desktop layout unchanged.
-   ========================================================= */
-@media (max-width: 390px) {
-  html, body {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-  }
-
-  body {
-    font-size: 13px !important;
-  }
-
-  #mainAppWrapper {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: .45rem .45rem 3.5rem !important;
-    overflow-x: hidden !important;
-  }
-
-  #mainAppWrapper > div {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  /* Header */
-  header {
-    width: 100% !important;
-    padding: .2rem 0 .55rem !important;
-    margin-bottom: .35rem !important;
-  }
-
-  header h1 {
-    font-size: 1.25rem !important;
-    line-height: 1.15 !important;
-  }
-
-  header > div {
-    min-width: 0 !important;
-  }
-
-  header > div:first-child {
-    gap: .45rem !important;
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
-  }
-
-  header > div:first-child > span {
-    flex: 0 0 auto !important;
-  }
-
-  header > div:last-child {
-    gap: .3rem !important;
-    flex-wrap: wrap !important;
-    justify-content: flex-end !important;
-  }
-
-  #darkModeToggle,
-  header button[onclick] {
-    min-width: 2.25rem !important;
-    width: 2.25rem !important;
-    height: 2.25rem !important;
-    padding: .35rem !important;
-  }
-
-  #headerMonthSelect {
-    min-width: 0 !important;
-    width: 5.8rem !important;
-    max-width: 5.8rem !important;
-    font-size: .7rem !important;
-    padding: .35rem .3rem !important;
-  }
-
-  #balanceToggleBtn {
-    min-height: 2.25rem !important;
-    max-width: 8rem !important;
-    padding: .35rem .5rem !important;
-    font-size: .68rem !important;
-  }
-
-  #sync-text {
-    max-width: 6.8rem !important;
-    font-size: .6rem !important;
-  }
-
-  #manualSyncBtn {
-    min-height: 2.15rem !important;
-    padding: .35rem .5rem !important;
-    font-size: .65rem !important;
-  }
-
-  /* Main grid becomes one clean column */
-  #mainAppWrapper .grid {
-    display: block !important;
-  }
-
-  #mainAppWrapper .grid > * {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  #mainAppWrapper .space-y-4 > * + *,
-  #mainAppWrapper .space-y-6 > * + * {
-    margin-top: .7rem !important;
-  }
-
-  /* Cards */
-  #mainAppWrapper .p-4 {
-    padding: .8rem !important;
-  }
-
-  #mainAppWrapper .p-6 {
-    padding: .85rem !important;
-  }
-
-  /* Mode buttons */
-  #modeDay2DayBtn,
-  #modeMedicalBtn {
-    min-height: 2.55rem !important;
-    padding: .45rem .6rem !important;
-    font-size: .72rem !important;
-  }
-
-  /* Snapshot */
-  #mainAppWrapper .bg-gradient-to-br {
-    padding: .85rem !important;
-    border-radius: .9rem !important;
-  }
-
-  /* Inputs / selects */
-  input,
-  select,
-  textarea,
-  button {
-    max-width: 100% !important;
-  }
-
-  input:not([type="checkbox"]):not([type="radio"]),
-  select,
-  textarea {
-    min-height: 2.55rem !important;
-    font-size: .78rem !important;
-    box-sizing: border-box !important;
-  }
-
-  label {
-    font-size: .68rem !important;
-  }
-
-  /* Transaction filters */
-  #filterCategory,
-  #filterDate {
-    width: 100% !important;
-  }
-
-  /* Tables: never allow the page itself to overflow */
-  .overflow-x-auto {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-  }
-
-  table {
-    width: 100% !important;
-    max-width: 100% !important;
-    table-layout: fixed !important;
-  }
-
-  /* Transaction rows as compact cards */
-  #expenseTableBody tr,
-  #itemHistoryTableBody tr {
-    display: grid !important;
-    grid-template-columns: 1fr auto !important;
-    width: 100% !important;
-    margin: 0 0 .55rem !important;
-    padding: .55rem !important;
-    border: 1px solid rgba(148,163,184,.18) !important;
-    border-radius: .7rem !important;
-    background: white !important;
-    box-shadow: 0 2px 8px rgba(15,23,42,.06) !important;
-    box-sizing: border-box !important;
-  }
-
-  .dark #expenseTableBody tr,
-  .dark #itemHistoryTableBody tr {
-    background: #172033 !important;
-  }
-
-  #expenseTableBody td,
-  #itemHistoryTableBody td {
-    display: block !important;
-    width: auto !important;
-    max-width: none !important;
-    padding: .25rem .3rem !important;
-    border: 0 !important;
-    min-width: 0 !important;
-  }
-
-  #expenseTableBody td:nth-child(1),
-  #itemHistoryTableBody td:nth-child(1) {
-    grid-column: 1 / -1 !important;
-  }
-
-  #expenseTableBody td:nth-child(2),
-  #itemHistoryTableBody td:nth-child(2) {
-    grid-column: 1 !important;
-    overflow-wrap: anywhere !important;
-  }
-
-  #expenseTableBody td:nth-child(3),
-  #itemHistoryTableBody td:nth-child(3) {
-    grid-column: 1 !important;
-    color: #64748b !important;
-  }
-
-  #expenseTableBody td:nth-child(4),
-  #itemHistoryTableBody td:nth-child(4) {
-    grid-column: 2 !important;
-    grid-row: 2 / span 2 !important;
-    align-self: center !important;
-    text-align: right !important;
-    white-space: nowrap !important;
-    font-size: .78rem !important;
-  }
-
-  #expenseTableBody td:nth-child(5),
-  #itemHistoryTableBody td:nth-child(5) {
-    grid-column: 2 !important;
-    grid-row: 1 / span 1 !important;
-    justify-self: end !important;
-  }
-
-  #expenseTableBody td:nth-child(5) > div,
-  #itemHistoryTableBody td:nth-child(5) > div {
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: .35rem !important;
-  }
-
-  #expenseTableBody button,
-  #itemHistoryTableBody button {
-    min-width: 2rem !important;
-    min-height: 2rem !important;
-    padding: .2rem !important;
-  }
-
-  /* Shopping/item history */
-  #itemHistoryTableBody td:nth-child(2) {
-    font-size: .76rem !important;
-  }
-
-  /* Modal */
-  #imageModal > div,
-  #editModal > div,
-  #changePinModal > div,
-  #editMedicalCategoryModal > div {
-    width: calc(100vw - 1rem) !important;
-    max-width: calc(100vw - 1rem) !important;
-    max-height: calc(100vh - 1rem) !important;
-    overflow-y: auto !important;
-    margin: .5rem !important;
-    box-sizing: border-box !important;
-  }
-
-  /* PIN screen */
-  #pinScreen {
-    padding: .75rem !important;
-  }
-
-  #pinScreen > div {
-    width: 100% !important;
-    max-width: 330px !important;
-    padding: 1.1rem !important;
-  }
-
-  #pinInput,
-  #unlockBtn {
-    min-height: 2.8rem !important;
-  }
-
-  /* Receipt */
-  #receiptFile {
-    font-size: .62rem !important;
-    padding: .35rem !important;
-  }
-
-  /* Very narrow phones */
-  @media (max-width: 360px) {
-    #mainAppWrapper {
-      padding-left: .35rem !important;
-      padding-right: .35rem !important;
-    }
-
-    header h1 {
-      font-size: 1.12rem !important;
-    }
-
-    #headerMonthSelect {
-      width: 5.2rem !important;
-      max-width: 5.2rem !important;
-    }
-
-    #sync-text {
-      display: none !important;
-    }
-
-    #balanceToggleBtn {
-      max-width: 7rem !important;
-      font-size: .62rem !important;
-    }
-
-    #mainAppWrapper .p-4,
-    #mainAppWrapper .p-6 {
-      padding: .7rem !important;
-    }
-  }
-}
-
-</style>
 </head>
 <body class="bg-gray-50 dark:bg-[#0f172a] text-gray-800 dark:text-gray-100 font-sans transition-colors duration-300">
 
@@ -918,10 +310,10 @@
                         </div>
                         <div>
                             <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Category</label>
-                            <div class="flex gap-2">
-                                <select id="category" class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-2 sm:p-2.5 border bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 text-xs sm:text-sm outline-none"></select>
-                                <button type="button" id="editCategoryBtn" class="hidden bg-amber-50 text-amber-700 border border-amber-200 rounded-md px-3 font-bold" title="Rename Medical Travel Category">✏️</button>
-                                <button type="button" id="deleteCategoryBtn" class="hidden bg-red-100 text-red-600 border border-red-200 rounded-md px-3 font-bold">🗑️</button>
+                            <div class="flex gap-2 h-[42px] items-stretch">
+                                <select id="category" class="block w-full h-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-2 sm:p-2.5 border bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 text-xs sm:text-sm outline-none"></select>
+                                <button type="button" id="editCategoryBtn" class="hidden h-full bg-amber-50 text-amber-700 border border-amber-200 rounded-md px-3 font-bold" title="Rename Medical Travel Category">✏️</button>
+                                <button type="button" id="deleteCategoryBtn" class="hidden h-full bg-red-100 text-red-600 border border-red-200 rounded-md px-3 font-bold">🗑️</button>
                             </div>
                         </div>
 
@@ -936,10 +328,11 @@
                                 <div class="shopping-item-row flex flex-col gap-1.5 sm:gap-2">
                                     <input type="text" list="itemSuggestions" placeholder="Item Name" class="shop-item-name block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
                                     <div class="flex gap-1.5 sm:gap-2">
-                                        <input type="number" step="0.01" placeholder="Qty" class="shop-item-qty block w-1/2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
-                                        <select class="shop-item-unit block w-1/2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                                        <input type="number" step="0.01" placeholder="Qty" class="shop-item-qty block w-1/3 rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                                        <select class="shop-item-unit block w-1/3 rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
                                             <option value="kg">kg</option><option value="gram">gram</option><option value="liter">liter</option><option value="pcs">pcs</option><option value="packet">packet</option>
                                         </select>
+                                        <input type="number" step="0.01" min="0" placeholder="Item AMT ₹" class="shop-item-amount block w-1/3 rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 sm:p-2 border text-[11px] sm:text-xs font-bold bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
                                     </div>
                                 </div>
                             </div>
@@ -1037,7 +430,6 @@
                                             <th class="px-1.5 py-2 whitespace-nowrap">
                                                 <div class="relative inline-flex items-center">
                                                     <div id="catFilterWrapper" class="relative">
-                                                        <!-- The select remains as the functional filter; the button/menu gives dark-mode-safe rendering. -->
                                                         <select id="filterCategory" class="hidden"></select>
                                                         <button id="categoryFilterMenuBtn" type="button" class="flex items-center gap-1 px-2 py-1 rounded-md border border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700 text-[9px] font-bold outline-none">
                                                             <span id="categoryFilterMenuLabel">CAT (All)</span><span class="text-slate-300 text-xs leading-none">⌄</span>
@@ -1119,12 +511,19 @@
                 <input type="date" id="editDate" required class="w-full border p-2 text-xs">
                 <input type="text" id="editDescription" required class="w-full border p-2 text-xs">
                 <select id="editCategory" class="w-full border p-2 text-xs"></select>
+                <div id="editShoppingDetails" class="hidden border border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800 rounded-lg p-2 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-blue-800 dark:text-blue-300 uppercase">Shopping Items</span>
+                        <button type="button" id="editAddShoppingItemBtn" class="bg-blue-200 dark:bg-blue-800 text-blue-900 dark:text-blue-100 text-[10px] font-bold py-1 px-2 rounded">+ Add Item</button>
+                    </div>
+                    <div id="editShoppingItemsContainer" class="space-y-2"></div>
+                    <div class="text-right text-[11px] font-extrabold text-blue-800 dark:text-blue-300">Items Total: ₹<span id="editShoppingTotal">0.00</span></div>
+                </div>
                 <input type="number" id="editAmount" step="0.01" required class="w-full border p-2 text-xs font-bold">
                 <button type="submit" id="saveEditBtn" class="w-full bg-emerald-600 text-white font-bold py-2 rounded-lg text-xs">Save</button>
             </form>
         </div>
     </div>
-
     <!-- JAVASCRIPT LOGIC -->
     <script>
         const getEl = id => document.getElementById(id);
@@ -1180,7 +579,6 @@
             getEl('changePinForm').reset(); getEl('changePinModal').classList.add('hidden'); alert("Success! App PIN has been changed.");
         });
 
-        // 🔴 STRICT ONLINE SYNC 🔴
         function updateSyncUI(status) {
             const dot = getEl('sync-dot'), txt = getEl('sync-text');
             if (status === 'synced') {
@@ -1224,7 +622,6 @@
         let monthlyBudget = 35000, isBalanceHidden = false;
         let currentTotalBalance = 0, totalCashBalance = 0, totalOnlineBalance = 0;
 
-        // 🔴 UPDATED CATEGORIES FOR MEDICAL TRAVEL (VELLOR SORNO MONDIR ADDED) 🔴
         const medicalTravelCategoriesList = ["Doctor Consultation", "Lab Tests & Scans", "Medicines & Pharmacy", "Hospitalization & Surgery", "Travel (Train/Bus/Flight)", "Local Transport (Auto/Taxi)", "Hotel / Accommodation", "Vellor Sorno Mondir", "Water", "Food"];
         const categoriesDay2Day = [ { value: "Food & Dining", label: "Food & Dining" }, { value: "Shopping", label: "Shopping" }, { value: "Room & Electric", label: "Room Rent & Electric Bill" }, { value: "Fuel & Travel", label: "Fuel & Travel" }, { value: "Taklu - Food", label: "👶 Taklu - Food" }, { value: "Taklu - Shopping", label: "👶 Taklu - Shopping" }, { value: "Taklu - Medical", label: "👶 Taklu - Medical" }, { value: "Medical", label: "Other Medical" }, { value: "Other - Daily Expense", label: "☕ Daily Expense" }, { value: "Other", label: "Other" } ];
         const categoriesMedicalTravel = [ { value: "Doctor Consultation", label: "Doctor Consultation" }, { value: "Lab Tests & Scans", label: "Lab Tests & Scans" }, { value: "Medicines & Pharmacy", label: "Medicines & Pharmacy" }, { value: "Hospitalization & Surgery", label: "Hospitalization & Surgery" }, { value: "Travel (Train/Bus/Flight)", label: "Travel (Train/Bus/Flight)" }, { value: "Local Transport (Auto/Taxi)", label: "Local Transport (Auto/Taxi)" }, { value: "Hotel / Accommodation", label: "Hotel / Accommodation" }, { value: "Vellor Sorno Mondir", label: "Vellor Sorno Mondir" }, { value: "Water", label: "Water" }, { value: "Food", label: "Food" } ];
@@ -1233,7 +630,6 @@
         let customDay2DayCats = JSON.parse(localStorage.getItem('customDay2DayCats') || '[]');
         let customMedTravelCats = JSON.parse(localStorage.getItem('customMedTravelCats') || '[]');
         let customIncomeCats = JSON.parse(localStorage.getItem('customIncomeCats') || '[]');
-        // Keep the original category values intact so existing Firestore records remain compatible.
         let medicalCategoryLabels = JSON.parse(localStorage.getItem('medicalCategoryLabels') || '{}');
         const getMedicalCategoryLabel = (category) => medicalCategoryLabels[category.value] || category.label;
         const getCategoryDisplayName = (value) => {
@@ -1327,8 +723,8 @@
 
         function switchMode(mode) {
             currentAppMode = mode; localStorage.setItem('myExpenseLastTab', mode);
-            getEl('modeDay2DayBtn').className = mode === 'Day2Day' ? "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold bg-white dark:bg-[#334155] text-blue-600 dark:text-blue-400 shadow-md transition whitespace-nowrap" : "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 hover:text-gray-700 whitespace-nowrap";
-            getEl('modeMedicalBtn').className = mode === 'MedicalTravel' ? "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold bg-white dark:bg-[#334155] text-blue-600 dark:text-blue-400 shadow-md transition whitespace-nowrap" : "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 hover:text-gray-700 whitespace-nowrap";
+            getEl('modeDay2DayBtn').className = mode === 'Day2Day' ? "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold bg-white dark:bg-[#334155] text-blue-600 dark:text-blue-400 shadow-md transition flex items-center justify-center gap-1 sm:gap-2 whitespace-nowrap" : "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 hover:text-gray-700 transition flex items-center justify-center gap-1 sm:gap-2 whitespace-nowrap";
+            getEl('modeMedicalBtn').className = mode === 'MedicalTravel' ? "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold bg-white dark:bg-[#334155] text-blue-600 dark:text-blue-400 shadow-md transition flex items-center justify-center gap-1 sm:gap-2 whitespace-nowrap" : "flex-1 sm:flex-none px-2 sm:px-6 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 hover:text-gray-700 transition flex items-center justify-center gap-1 sm:gap-2 whitespace-nowrap";
             
             monthlyBudget = localStorage.getItem('myExpenseBudget_' + currentAppMode) || (currentAppMode === 'Day2Day' ? 35000 : 200000);
             getEl('budgetText').innerText = `₹${formatINR(monthlyBudget)}`;
@@ -1343,7 +739,6 @@
         getEl('modeMedicalBtn').addEventListener('click', () => switchMode('MedicalTravel'));
 
         function getActiveExpenses() {
-            // 🔴 100% BULLETPROOF CATEGORY FILTER 🔴
             return allExpenses.filter(exp => {
                 if (exp.appMode) return exp.appMode === currentAppMode;
                 if (exp.txType === 'income') return currentAppMode === 'Day2Day'; 
@@ -1351,11 +746,9 @@
                 let catSafe = (exp.category || '').trim();
                 let catLower = catSafe.toLowerCase();
                 
-                // Agar category me 'vellor', 'sorno', 'water', 'food' etc hai toh usey medical me daalo
                 let isMed = medicalTravelCategoriesList.includes(catSafe) || customMedTravelCats.includes(catSafe) || 
                             catLower.includes('sorno') || catLower.includes('vellor') || catLower.includes('water') || catLower.includes('food');
                 
-                // Force Taklu and Medical back to Day2Day 
                 if (catLower.includes('taklu') || catLower === 'medical' || catLower === 'other medical') isMed = false;
 
                 if (exp.date && exp.date.startsWith('2026-08')) isMed = false; 
@@ -1364,12 +757,10 @@
         }
 
         function formatINR(amt) { return Number(amt || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-        // Older records may use a different letter case (for example VELLOR SORNO MONDIR).
-        // Compare category filters safely without changing the stored Firestore value.
+        
         const sameCategory = (first, second) => {
             const normalizedFirst = String(first || '').trim().replace(/\s+/g, ' ').toLowerCase();
             const normalizedSecond = String(second || '').trim().replace(/\s+/g, ' ').toLowerCase();
-            // Supports older saved names such as "WATER", "Drinking Water", or "Water Bottle".
             return normalizedFirst === normalizedSecond || (normalizedSecond.length >= 3 && normalizedFirst.includes(normalizedSecond));
         };
 
@@ -1441,7 +832,10 @@
             checkDeleteButtonVisibility(this.value);
             getEl('shoppingDetails').classList.add('hidden'); getEl('roomElectricDetails').classList.add('hidden');
             getEl('amount').readOnly = false; getEl('amount').classList.remove('bg-gray-200', 'dark:bg-[#1e293b]');
-            if (this.value === 'Shopping' || this.value === 'Taklu - Shopping') getEl('shoppingDetails').classList.remove('hidden');
+            if (this.value === 'Shopping' || this.value === 'Taklu - Shopping') {
+                getEl('shoppingDetails').classList.remove('hidden');
+                window.calcShoppingTotal();
+            }
             else if (this.value === 'Room & Electric') { getEl('roomElectricDetails').classList.remove('hidden'); getEl('amount').readOnly = true; getEl('amount').classList.add('bg-gray-200', 'dark:bg-[#1e293b]'); }
         });
 
@@ -1449,7 +843,6 @@
         getEl('roomRentAmt').addEventListener('input', calcRentBill); getEl('electricBillAmt').addEventListener('input', calcRentBill);
 
         getEl('headerMonthSelect').addEventListener('change', () => { getEl('filterDate').value = ''; renderExpenses(); });
-        // Some mobile date pickers emit input before change, so refresh on both.
         getEl('filterDate').addEventListener('input', renderExpenses);
         getEl('filterDate').addEventListener('change', renderExpenses);
         getEl('filterCategory').addEventListener('change', () => { renderCategoryFilterMenu(); renderExpenses(); });
@@ -1467,7 +860,6 @@
         getEl('snapTabMonths').addEventListener('click', () => { getEl('snapshotMonthsView').classList.remove('hidden'); getEl('snapshotCategoriesView').classList.add('hidden'); });
         getEl('snapTabCategories').addEventListener('click', () => { getEl('snapshotCategoriesView').classList.remove('hidden'); getEl('snapshotMonthsView').classList.add('hidden'); });
 
-        // 🔴 RENDER METHOD 🔴
         function renderExpenses() {
             const activeExp = getActiveExpenses();
             const tb = getEl('expenseTableBody'); tb.innerHTML = '';
@@ -1514,7 +906,6 @@
             });
             if(mTotExp===0) getEl('categoryBreakdownContainer').innerHTML = '<p class="text-[10px] text-white/60">No expenses.</p>';
             
-            // Budget Update
             let pct = (mTotExp / monthlyBudget) * 100; let displayPct = pct > 100 ? 100 : pct;
             getEl('budgetPercentage').innerText = `${pct.toFixed(1)}%`; getEl('budgetProgressBar').style.width = `${displayPct}%`;
             if(pct < 70) getEl('budgetProgressBar').className = "bg-blue-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(96,165,250,0.5)] transition-all";
@@ -1523,8 +914,6 @@
 
             let finExp = getEl('filterCategory').value !== 'All' ? monthExp.filter(e => sameCategory(e.category, getEl('filterCategory').value)) : monthExp;
             
-            // Show a clear total for the exact date selected in the transaction filter.
-            // This is display-only and does not alter the saved transaction data.
             const selectedDate = getEl('filterDate').value;
             const dateTotalDisp = getEl('dateTotalDisplay');
             if (selectedDate) {
@@ -1595,63 +984,30 @@
             });
         }
 
-        // The former Universal Tracker view has been removed; transactions remain the single workspace.
-        function renderItemHistory() {
-            const query = getEl('searchItemInput').value.toLowerCase().trim(); const dateQuery = getEl('universalDateFilter').value;
-            const table = getEl('itemHistoryTableBody'); table.innerHTML = '';
-            
-            if (query === '' && dateQuery === '') {
-                table.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-[10px] text-gray-500">Search text or pick a date...</td></tr>'; getEl('universalTotalDisplay').innerText = `Total: ₹0.00`; return;
-            }
-            let foundItems = []; let sourceExpenses = getActiveExpenses();
-            if (dateQuery) sourceExpenses = sourceExpenses.filter(e => e.date === dateQuery);
-
-            sourceExpenses.forEach(exp => {
-                try {
-                    const desc = (exp.description || '').toLowerCase(); const cat = (exp.category || '').toLowerCase();
-                    const matchDesc = query === '' ? true : (desc.includes(query) || cat.includes(query));
-                    const typeMult = exp.txType === 'income' ? 1 : -1;
-
-                    if (exp.category === 'Shopping' || exp.category === 'Taklu - Shopping') {
-                        let pushedAny = false;
-                        if (exp.shoppingItems && exp.shoppingItems.length > 0) {
-                            exp.shoppingItems.forEach(item => { if (query === '' || (item.name||'').toLowerCase().includes(query) || matchDesc) { foundItems.push({ expId: exp.id, date: exp.date, timestamp: exp.timestamp, name: item.name, details: `${item.qty} ${item.unit}`, amount: exp.amount, txType: exp.txType, mult: typeMult, context: exp.description }); pushedAny = true; } });
-                        } else if (exp.shopItem) {
-                            if (query === '' || (exp.shopItem||'').toLowerCase().includes(query) || matchDesc) { foundItems.push({ expId: exp.id, date: exp.date, timestamp: exp.timestamp, name: exp.shopItem, details: `${exp.shopQty} ${exp.shopUnit}`, amount: exp.amount, txType: exp.txType, mult: typeMult, context: exp.description }); pushedAny = true; }
-                        }
-                        if (!pushedAny && matchDesc) foundItems.push({ expId: exp.id, date: exp.date, timestamp: exp.timestamp, name: exp.description, details: 'Bill', amount: exp.amount, txType: exp.txType, mult: typeMult, context: '' });
-                    } else {
-                        if (matchDesc) {
-                            let det = exp.category; if (exp.category === 'Room & Electric') det = `Rent: ₹${exp.roomRentAmt||0} | Bill: ₹${exp.electricBillAmt||0}`;
-                            foundItems.push({ expId: exp.id, date: exp.date, timestamp: exp.timestamp, name: exp.description, details: det, amount: exp.amount, txType: exp.txType, mult: typeMult, context: '' });
-                        }
-                    }
-                } catch(e) {}
-            });
-
-            foundItems.sort((a, b) => (b.date||"").localeCompare(a.date||"") || new Date(b.timestamp||0) - new Date(a.timestamp||0));
-            
-            let universalTotal = 0; let addedExpIds = new Set(); 
-            if (foundItems.length === 0) { table.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-[10px] text-gray-500">No records found.</td></tr>'; getEl('universalTotalDisplay').innerText = `Total: ₹0.00`; return; }
-
-            foundItems.forEach(item => {
-                if (!addedExpIds.has(item.expId)) { universalTotal += (parseFloat(item.amount || 0) * item.mult); addedExpIds.add(item.expId); }
-                const row = document.createElement('tr'); row.className = "border-b border-gray-200 hover:bg-gray-100 dark:border-gray-700";
-                row.innerHTML = `<td class="px-1.5 py-2.5"><span class="bg-indigo-100 text-indigo-700 font-bold px-1.5 py-0.5 rounded text-[9px]">📅 ${(item.date||'').split('-').reverse().join('/')}</span></td><td class="px-1 py-2.5 font-semibold text-xs">${item.name||''} <div class="text-[9px] text-gray-400">${item.context?"Context: "+item.context:""}</div></td><td class="px-1 py-2.5 text-gray-500 text-[10px]">${item.details||''}</td><td class="px-2 py-2.5 text-left ${item.txType === 'income' ? 'text-green-600' : 'text-red-500'} font-bold text-xs">${item.txType === 'income' ? '+' : '-'}₹${formatINR(item.amount)}</td><td class="px-2 py-2.5 text-left"><div class="flex flex-col items-start"><button onclick="window.openEditModal('${item.expId}')" class="text-blue-500 text-xs">✏️</button><button onclick="window.deleteExpense('${item.expId}')" class="text-red-500 font-bold text-base">&times;</button></div></td>`;
-                table.appendChild(row);
-            });
-            getEl('universalTotalDisplay').innerText = `Net: ₹${formatINR(universalTotal)}`;
-            getEl('universalTotalDisplay').className = universalTotal >= 0 ? "bg-green-50 text-green-700 border border-green-200 text-[11px] font-bold px-3 py-2 rounded-lg" : "bg-red-50 text-red-700 border border-red-200 text-[11px] font-bold px-3 py-2 rounded-lg";
-        }
-
-        // STRICT ONLINE SUBMISSION
         getEl('expenseForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             if (!navigator.onLine) { alert("Internet Required! You must be online to save a transaction."); return; }
             const btn = getEl('submitBtn'); btn.innerText = "Saving..."; btn.disabled = true;
             let sArr = [];
+            let shoppingItemsTotal = 0;
+            let hasShoppingItemAmount = false;
             if (getEl('category').value === 'Shopping' || getEl('category').value === 'Taklu - Shopping') {
-                document.querySelectorAll('.shopping-item-row').forEach(r => { const n=r.querySelector('.shop-item-name').value; if(n.trim()) sArr.push({name:n, qty:r.querySelector('.shop-item-qty').value||"1", unit:r.querySelector('.shop-item-unit').value}); });
+                document.querySelectorAll('#shoppingItemsContainer .shopping-item-row').forEach(r => {
+                    const n = r.querySelector('.shop-item-name').value;
+                    if(n.trim()) {
+                        const itemAmtRaw = r.querySelector('.shop-item-amount') ? r.querySelector('.shop-item-amount').value : "";
+                        const itemAmt = parseFloat(itemAmtRaw) || 0;
+                        if (itemAmtRaw !== "") hasShoppingItemAmount = true;
+                        shoppingItemsTotal += itemAmt;
+                        sArr.push({
+                            name:n,
+                            qty:r.querySelector('.shop-item-qty').value||"1",
+                            unit:r.querySelector('.shop-item-unit').value,
+                            amount:itemAmtRaw === "" ? "" : itemAmt.toFixed(2)
+                        });
+                    }
+                });
+                if (hasShoppingItemAmount) getEl('amount').value = shoppingItemsTotal.toFixed(2);
             }
             let b64 = ""; if(getEl('receiptFile').files[0]) b64 = await new Promise(r => { const f=new FileReader(); f.onload=e=>r(e.target.result); f.readAsDataURL(getEl('receiptFile').files[0]); });
             
@@ -1676,31 +1032,144 @@
         }
         window.viewReceipt = function(b64) { getEl('modalImage').src = b64; getEl('imageModal').classList.remove('hidden'); }
         
+        function makeShoppingItemRow(item = {}, isEdit = false) {
+            const row = document.createElement('div');
+            row.className = "shopping-item-row flex flex-col gap-1.5 relative border-t border-blue-100 dark:border-blue-800 pt-2";
+            row.innerHTML = `
+                <button type="button" class="absolute top-1 right-0 text-red-400 hover:text-red-600 font-bold text-xl leading-none" onclick="this.parentElement.remove(); ${isEdit ? 'window.calcEditShoppingTotal()' : 'window.calcShoppingTotal()'}">&times;</button>
+                <input type="text" list="itemSuggestions" placeholder="Item Name" value="${String(item.name||'').replace(/"/g,'&quot;')}" class="shop-item-name block w-11/12 rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 text-[11px] bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                <div class="flex gap-1.5">
+                    <input type="number" step="0.01" placeholder="Qty" value="${item.qty||''}" class="shop-item-qty block w-1/3 rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 text-[11px] bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                    <select class="shop-item-unit block w-1/3 rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 text-[11px] bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                        <option value="kg">kg</option><option value="gram">gram</option><option value="liter">liter</option><option value="pcs">pcs</option><option value="packet">packet</option>
+                    </select>
+                    <input type="number" step="0.01" min="0" placeholder="Item AMT ₹" value="${item.amount ?? ''}" class="shop-item-amount block w-1/3 rounded-md border-gray-300 dark:border-gray-600 shadow-sm p-1.5 text-[11px] font-bold bg-white dark:bg-[#334155] text-gray-900 dark:text-gray-100 outline-none">
+                </div>`;
+            row.querySelector('.shop-item-unit').value = item.unit || 'pcs';
+            const amt = row.querySelector('.shop-item-amount');
+            amt.addEventListener('input', isEdit ? window.calcEditShoppingTotal : window.calcShoppingTotal);
+            return row;
+        }
+
+        window.calcShoppingTotal = function() {
+            const rows = document.querySelectorAll('#shoppingItemsContainer .shopping-item-row');
+            let total = 0, hasAmount = false;
+            rows.forEach(r => {
+                const n = r.querySelector('.shop-item-name')?.value.trim();
+                const raw = r.querySelector('.shop-item-amount')?.value || "";
+                if (n && raw !== "") hasAmount = true;
+                if (n) total += parseFloat(raw) || 0;
+            });
+            if (hasAmount) {
+                getEl('amount').value = total.toFixed(2);
+                getEl('amount').readOnly = true;
+                getEl('amount').classList.add('bg-gray-200','dark:bg-[#1e293b]');
+            } else {
+                getEl('amount').readOnly = false;
+                getEl('amount').classList.remove('bg-gray-200','dark:bg-[#1e293b]');
+            }
+        };
+
+        window.calcEditShoppingTotal = function() {
+            const rows = document.querySelectorAll('#editShoppingItemsContainer .shopping-item-row');
+            let total = 0, hasAmount = false;
+            rows.forEach(r => {
+                const n = r.querySelector('.shop-item-name')?.value.trim();
+                const raw = r.querySelector('.shop-item-amount')?.value || "";
+                if (n && raw !== "") hasAmount = true;
+                if (n) total += parseFloat(raw) || 0;
+            });
+            getEl('editShoppingTotal').innerText = formatINR(total);
+            if (hasAmount) {
+                getEl('editAmount').value = total.toFixed(2);
+                getEl('editAmount').readOnly = true;
+                getEl('editAmount').classList.add('bg-gray-200');
+            } else {
+                getEl('editAmount').readOnly = false;
+                getEl('editAmount').classList.remove('bg-gray-200');
+            }
+        };
+
         window.openEditModal = function(id) {
             const exp = allExpenses.find(e => e.id === id); if(!exp) return;
             getEl('editDocId').value = exp.id;
             getEl('editTypeIncome').checked = exp.txType === 'income'; getEl('editTypeExpense').checked = exp.txType !== 'income';
             getEl('editPaymentCash').checked = exp.paymentMode === 'cash'; getEl('editPaymentOnline').checked = exp.paymentMode !== 'cash';
             updateCategoryUI('edit');
-            getEl('editDate').value = exp.date; getEl('editDescription').value = exp.description; getEl('editCategory').value = exp.category || 'Other'; getEl('editAmount').value = exp.amount;
+            getEl('editDate').value = exp.date;
+            getEl('editDescription').value = exp.description;
+            getEl('editCategory').value = exp.category || 'Other';
+            getEl('editAmount').value = exp.amount;
+
+            const isShopping = exp.category === 'Shopping' || exp.category === 'Taklu - Shopping';
+            const editShop = getEl('editShoppingDetails');
+            const editContainer = getEl('editShoppingItemsContainer');
+            editContainer.innerHTML = '';
+            if (isShopping) {
+                editShop.classList.remove('hidden');
+                const items = Array.isArray(exp.shoppingItems) && exp.shoppingItems.length
+                    ? exp.shoppingItems
+                    : (exp.shopItem ? [{name:exp.shopItem, qty:exp.shopQty, unit:exp.shopUnit, amount:""}] : []);
+                items.forEach(item => editContainer.appendChild(makeShoppingItemRow(item, true)));
+                getEl('editShoppingTotal').innerText = formatINR(items.reduce((sum,i)=>sum+(parseFloat(i.amount)||0),0));
+                window.calcEditShoppingTotal();
+            } else {
+                editShop.classList.add('hidden');
+            }
             getEl('editModal').classList.remove('hidden');
         }
+
+        getEl('editAddShoppingItemBtn').addEventListener('click', () => {
+            getEl('editShoppingItemsContainer').appendChild(makeShoppingItemRow({}, true));
+            window.calcEditShoppingTotal();
+        });
 
         getEl('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
             if (!navigator.onLine) { alert("Internet required to edit."); return; }
             const btn = getEl('saveEditBtn'); btn.innerText = "Saving..."; btn.disabled = true;
-            firebase.firestore().collection("my_personal_expenses").doc(getEl('editDocId').value).update({
-                txType: document.querySelector('input[name="editTxType"]:checked').value, paymentMode: document.querySelector('input[name="editPaymentMode"]:checked').value, 
-                date: getEl('editDate').value, description: getEl('editDescription').value, category: getEl('editCategory').value, amount: getEl('editAmount').value
-            }).then(() => { getEl('editModal').classList.add('hidden'); btn.innerText = "Save Changes"; btn.disabled = false; })
+
+            const category = getEl('editCategory').value;
+            const updateData = {
+                txType: document.querySelector('input[name="editTxType"]:checked').value,
+                paymentMode: document.querySelector('input[name="editPaymentMode"]:checked').value,
+                date: getEl('editDate').value,
+                description: getEl('editDescription').value,
+                category: category,
+                amount: getEl('editAmount').value
+            };
+
+            if (category === 'Shopping' || category === 'Taklu - Shopping') {
+                let total = 0, hasAmount = false, items = [];
+                document.querySelectorAll('#editShoppingItemsContainer .shopping-item-row').forEach(r => {
+                    const n = r.querySelector('.shop-item-name').value;
+                    if (!n.trim()) return;
+                    const raw = r.querySelector('.shop-item-amount').value;
+                    if (raw !== '') hasAmount = true;
+                    total += parseFloat(raw) || 0;
+                    items.push({
+                        name: n,
+                        qty: r.querySelector('.shop-item-qty').value || "1",
+                        unit: r.querySelector('.shop-item-unit').value,
+                        amount: raw === '' ? "" : (parseFloat(raw)||0).toFixed(2)
+                    });
+                });
+                updateData.shoppingItems = items;
+                if (hasAmount) updateData.amount = total.toFixed(2);
+            }
+
+            firebase.firestore().collection("my_personal_expenses").doc(getEl('editDocId').value).update(updateData)
+            .then(() => { getEl('editModal').classList.add('hidden'); btn.innerText = "Save Changes"; btn.disabled = false; })
             .catch(e => { console.error(e); btn.innerText = "Save Changes"; btn.disabled = false; });
         });
 
         getEl('addShoppingItemBtn').addEventListener('click', () => {
-            const row = document.createElement('div'); row.className = "shopping-item-row flex flex-col gap-1.5 pt-3 border-t border-blue-100 relative";
-            row.innerHTML = `<button type="button" class="absolute top-1 right-0 text-red-400 hover:text-red-600 font-bold text-xl leading-none" onclick="this.parentElement.remove()">&times;</button><input type="text" list="itemSuggestions" placeholder="Item Name" class="shop-item-name block w-11/12 rounded-md border-gray-300 shadow-sm p-1.5 text-[11px] bg-white outline-none"><div class="flex gap-1.5"><input type="number" step="0.01" placeholder="Qty" class="shop-item-qty block w-1/2 rounded-md border-gray-300 shadow-sm p-1.5 text-[11px] bg-white outline-none"><select class="shop-item-unit block w-1/2 rounded-md border-gray-300 shadow-sm p-1.5 text-[11px] bg-white outline-none"><option value="kg">kg</option><option value="gram">gram</option><option value="liter">liter</option><option value="pcs">pcs</option><option value="packet">packet</option></select></div>`;
-            getEl('shoppingItemsContainer').appendChild(row);
+            getEl('shoppingItemsContainer').appendChild(makeShoppingItemRow({}, false));
+            window.calcShoppingTotal();
+        });
+
+        document.querySelectorAll('#shoppingItemsContainer .shop-item-amount').forEach(input => {
+            input.addEventListener('input', window.calcShoppingTotal);
         });
 
         getEl('exportCsvBtn').addEventListener('click', () => {
