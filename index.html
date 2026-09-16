@@ -13,6 +13,7 @@
     <style>
         .hide-scroll-bar::-webkit-scrollbar { display: none; }
         .hide-scroll-bar { -ms-overflow-style: none; scrollbar-width: none; }
+
         /* Modern interface layer */
         :root { color-scheme: light; }
         html { background: #f5f7fb; }
@@ -27,6 +28,7 @@
         button, select, input { -webkit-tap-highlight-color: transparent; }
         button { transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease !important; }
         button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid rgba(59,130,246,.25) !important; outline-offset: 2px; }
+
         #mainAppWrapper { padding-top: 1.35rem !important; }
         #mainAppWrapper > div { max-width: 76rem !important; }
         header { padding: .35rem 0 .7rem; }
@@ -35,10 +37,12 @@
         #darkModeToggle, header button[onclick] { border-radius: .85rem !important; min-width: 2.6rem; }
         #headerMonthSelect { min-width: 5.8rem; }
         #balanceToggleBtn { min-height: 2.55rem; }
+
         #sync-dot { box-shadow: 0 0 0 4px rgba(148,163,184,.14); }
         #manualSyncBtn { border-radius: .7rem !important; }
         #modeDay2DayBtn, #modeMedicalBtn { min-height: 2.9rem; }
         #modeDay2DayBtn { box-shadow: 0 5px 14px rgba(15,23,42,.10) !important; }
+
         /* Cards, fields, and panels */
         #mainAppWrapper .bg-white, #mainAppWrapper .dark\\:bg-\\[\#1e293b\] { border-radius: 1rem; }
         #mainAppWrapper .shadow-md { box-shadow: 0 12px 32px rgba(15,23,42,.07) !important; }
@@ -56,6 +60,7 @@
         #submitBtn, #saveEditBtn { border-radius: .78rem !important; min-height: 2.85rem; box-shadow: 0 8px 17px rgba(37,99,235,.25) !important; }
         #submitBtn:hover, #saveEditBtn:hover { box-shadow: 0 11px 22px rgba(37,99,235,.32) !important; transform: translateY(-1px); }
         #shoppingDetails, #roomElectricDetails { border-radius: .85rem !important; }
+
         /* Dashboard and data views */
         #mainAppWrapper .bg-gradient-to-br { border-radius: 1.25rem !important; box-shadow: 0 16px 34px rgba(67,56,202,.24) !important; }
         #monthlySummaryContainer > * { flex: 0 0 auto; }
@@ -65,6 +70,7 @@
         #tabTransactionsBtn, #tabItemHistoryBtn { padding: .1rem .15rem .6rem !important; }
         #tabTransactionsView, #tabItemHistoryView { border-radius: .95rem; }
         #filterDate, #filterCategory { border-radius: .7rem !important; }
+        
         /* Desktop Table Styles */
         table { border-collapse: separate !important; border-spacing: 0 4px !important; width: 100%; }
         thead tr { background: transparent !important; }
@@ -77,12 +83,14 @@
         #expenseTableBody td:first-child { border-left: 1px solid rgba(148,163,184,.10); }
         #expenseTableBody td:last-child { border-right: 1px solid rgba(148,163,184,.10); }
         #exportCsvBtn { border-radius: .7rem !important; }
+
         /* Modals & Overlays */
         #pinScreen { background: radial-gradient(circle at 50% 0%, #273f72 0, #111c34 38%, #070d1b 100%) !important; }
         #pinScreen > div { border-radius: 1.45rem !important; background: rgba(30,41,59,.88) !important; backdrop-filter: blur(18px); }
         #pinInput { border-radius: .85rem !important; }
         #unlockBtn { border-radius: .85rem !important; box-shadow: 0 10px 24px rgba(37,99,235,.32); }
         #imageModal > div, #editModal > div, #changePinModal > div, #editMedicalCategoryModal { border-radius: 1.2rem !important; box-shadow: 0 24px 60px rgba(0,0,0,.34) !important; }
+
         /* =========================================
            🚨 MOBILE FIX (100% CLEAN - NO JUNK CODE) 🚨
            ========================================= */
@@ -120,71 +128,84 @@
             #exportCsvBtn { width: 100% !important; min-height: 40px !important; }
 
             /* ----------------------------------------------------
-               THE STACKED CARD GENERATOR (DATE UPAR, DETAILS NICHE)
+               THE STACKED GRID: CATEGORY UNDER DATE 
                ---------------------------------------------------- */
-            #tabTransactionsView thead { display: none !important; }
-            
+            /* 1. Setup Block & Grid */
             #tabTransactionsView table, 
             #tabTransactionsView tbody, 
+            #tabTransactionsView thead,
             #expenseTableBody { 
                 display: block !important; 
                 width: 100% !important; 
             }
-            
+
+            /* The Grid Structure for both Header and Rows */
+            #tabTransactionsView thead tr,
             #expenseTableBody tr {
                 display: grid !important;
-                grid-template-columns: 26px 1fr auto !important;
-                grid-template-areas: 
-                    "chk date amt"
-                    "chk desc desc"
-                    "chk cat act" !important;
-                align-items: center !important;
-                gap: 8px !important;
-                padding: 12px 10px !important;
-                margin-bottom: 12px !important;
+                /* Columns: 1.Checkbox | 2.Date/Cat | 3.Details(Expand) | 4.Amt | 5.Action */
+                grid-template-columns: 24px minmax(0, 1fr) auto auto 40px !important;
+                align-items: start !important;
+                gap: 4px 6px !important;
+                padding: 10px 8px !important;
+                margin-bottom: 10px !important;
+            }
+
+            /* Styling the Body Rows (Cards) */
+            #expenseTableBody tr {
                 background: #ffffff !important;
                 border: 1px solid #e2e8f0 !important;
                 border-radius: 12px !important;
                 box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05) !important;
             }
             .dark #expenseTableBody tr { background: #1e293b !important; border-color: #334155 !important; }
-            
+
+            /* Remove default table cell behavior */
+            #tabTransactionsView th,
             #expenseTableBody td {
-                display: block !important;
-                border: none !important;
-                padding: 0 !important;
-                white-space: normal !important;
-                word-wrap: break-word !important;
-                text-align: left !important;
+                display: block !important; border: none !important; padding: 0 !important;
+                white-space: normal !important; word-wrap: break-word !important; text-align: left !important;
             }
 
-            #expenseTableBody td:nth-child(1) { grid-area: chk; align-self: start; margin-top: 4px !important; }
-            #expenseTableBody td:nth-child(2) { grid-area: date; font-size: 12px !important; color: #64748b !important; }
+            /* =========================================
+               HEADER ROW (Mapping)
+               ========================================= */
+            #tabTransactionsView thead tr { padding: 4px 8px !important; margin-bottom: 0 !important; }
+            #tabTransactionsView th:nth-child(1) { grid-column: 1; grid-row: 1; align-self: center; } /* Checkbox */
+            #tabTransactionsView th:nth-child(2) { grid-column: 2; grid-row: 1; align-self: center; } /* DATE + DETAILS */
+            #tabTransactionsView th:nth-child(3) { grid-column: 3; grid-row: 1; align-self: center; } /* CAT */
+            #tabTransactionsView th:nth-child(4) { grid-column: 4; grid-row: 1; align-self: center; text-align: right !important; } /* AMT */
+            #tabTransactionsView th:nth-child(5) { grid-column: 5; grid-row: 1; align-self: center; text-align: right !important; } /* ACT */
+
+            /* Category Dropdown button tweak to fit */
+            #categoryFilterMenuBtn { padding: 4px 6px !important; font-size: 9px !important; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+            /* =========================================
+               BODY ROWS (Mapping)
+               ========================================= */
+            #expenseTableBody td:nth-child(1) { grid-column: 1; grid-row: 1; align-self: start; margin-top: 4px; }
+            #expenseTableBody td:nth-child(2) { grid-column: 2; grid-row: 1; font-size: 11px !important; color: #64748b !important; }
+            #expenseTableBody td:nth-child(3) { grid-column: 3; grid-row: 1; align-self: start; }
+            #expenseTableBody td:nth-child(4) { grid-column: 4; grid-row: 1; text-align: right !important; font-size: 15px !important; font-weight: 900 !important; align-self: start; }
+            #expenseTableBody td:nth-child(5) { grid-column: 5; grid-row: 1; align-self: start; }
+            #expenseTableBody td:nth-child(5) div { display: flex !important; flex-direction: row !important; gap: 10px !important; justify-content: flex-end !important; }
+            .transaction-details { font-size: 13px !important; font-weight: 600 !important; line-height: 1.3 !important; color: #0f172a !important; }
+            .dark .transaction-details { color: #f8fafc !important; }
+
+            #tabTransactionsView input[type="checkbox"] { width: 18px !important; height: 18px !important; cursor: pointer !important; }
             
-            /* The Details section gets full space in the middle row */
-            #expenseTableBody td:nth-child(3) { 
-                grid-area: desc; 
-                font-size: 15px !important; 
-                font-weight: 700 !important; 
-                padding: 4px 0 !important; 
-                color: #0f172a !important;
-            }
-            .dark #expenseTableBody td:nth-child(3) { color: #f8fafc !important; }
-            
-            #expenseTableBody td:nth-child(4) { grid-area: cat; }
-            #expenseTableBody td:nth-child(5) { grid-area: amt; text-align: right !important; font-size: 16px !important; font-weight: 900 !important; }
-            #expenseTableBody td:nth-child(6) { grid-area: act; justify-self: end; }
-            #expenseTableBody td:nth-child(6) div { display: flex !important; gap: 15px !important; justify-content: flex-end !important; }
-            #tabTransactionsView input[type="checkbox"] { width: 18px !important; height: 18px !important; cursor: pointer !important; }   
             /* Modals */
             #imageModal > div, #editModal > div, #changePinModal > div, #editMedicalCategoryModal > div {
                 width: 100% !important; max-width: 100% !important; max-height: calc(100dvh - 20px) !important; padding: 14px !important;
             }
         }
+
         /* Smallest screens */
         @media (max-width: 380px) {
             #mainAppWrapper { padding-left: 7px !important; padding-right: 7px !important; }
             header > div:nth-child(2) { grid-template-columns: 86px minmax(0, 1fr) !important; }
+            /* Extra squish handling for very small phones */
+            #tabTransactionsView thead tr, #expenseTableBody tr { grid-template-columns: 24px 75px minmax(0, 1fr) auto 35px !important; }
         }
 
         /* Form Details hiding */
@@ -192,6 +213,7 @@
         #shoppingItemsContainer .shop-item-amount, #editShoppingItemsContainer .shop-item-amount { min-width: 0; }
         #editShoppingDetails { max-height: 42vh; overflow-y: auto; }
     </style>
+    
     <!-- FIREBASE COMPAT SCRIPTS -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -426,7 +448,6 @@
                                                     <button id="clearDateBtn" type="button" class="hidden z-20 ml-1 text-red-500 font-bold text-xs p-0.5">✕</button>
                                                 </div>
                                             </th>
-                                            <th class="px-1 py-2.5 text-[10px]">DETAILS</th>
                                             <th class="px-1.5 py-2 whitespace-nowrap">
                                                 <div class="relative inline-flex items-center">
                                                     <div id="catFilterWrapper" class="relative">
@@ -524,7 +545,7 @@
             </form>
         </div>
     </div>
-    <!-- JAVASCRIPT LOGIC -->
+<!-- JAVASCRIPT LOGIC -->
     <script>
         const getEl = id => document.getElementById(id);
         let activeEncodedPin = localStorage.getItem('customAppPin') || "MTIzNA=="; 
@@ -978,7 +999,7 @@
                     if(exp.receiptBase64) dHTML += `<div class="mt-1"><button onclick="window.viewReceipt('${exp.receiptBase64}')" class="text-[9px] bg-indigo-50 dark:bg-indigo-900/50 text-indigo-700 px-1.5 rounded-full font-bold">📎 Bill</button></div>`;
 
                     let tr = document.createElement('tr'); tr.className = rowClass; tr.setAttribute('onclick', `window.toggleRowVerify('${exp.id}', ${vState}, event)`);
-                    tr.innerHTML = `<td class="px-1 py-2 align-top text-center pt-3">${icn}</td><td class="px-1 py-2 align-top"><div class="bg-gray-100 dark:bg-[#334155] font-bold px-1.5 rounded text-[9px] border border-gray-200 inline-block">📅 ${dt}</div></td><td class="px-1 py-2 align-top max-w-[110px] break-words">${dHTML}</td><td class="px-1 py-2 align-top"><span class="${isInc?'bg-green-50 text-green-600':'bg-gray-50 dark:bg-gray-800 text-gray-500'} px-1 py-0.5 rounded text-[8px] uppercase font-bold border">${getCategoryDisplayName(exp.category||'Other').replace('Taklu - ','')}</span></td><td class="px-2 py-2 text-left font-extrabold align-top text-xs ${isInc?'text-green-600':'text-red-500'}">${isInc?'+':'-'}₹${formatINR(exp.amount)}</td><td class="px-2 py-2 align-top text-left"><div class="flex flex-col items-start gap-1"><button onclick="window.openEditModal('${exp.id}')" class="text-blue-500 text-xs">✏️</button><button onclick="window.deleteExpense('${exp.id}')" class="text-red-500 font-bold text-base">&times;</button></div></td>`;
+                    tr.innerHTML = `<td class="px-1 py-2 align-top text-center pt-3">${icn}</td><td class="px-1 py-2 align-top"><div class="bg-gray-100 dark:bg-[#334155] font-bold px-1.5 rounded text-[9px] border border-gray-200 inline-block">📅 ${dt}</div><div class="transaction-details mt-1 break-words">${dHTML}</div></td><td class="px-1 py-2 align-top"><span class="${isInc?'bg-green-50 text-green-600':'bg-gray-50 dark:bg-gray-800 text-gray-500'} px-1 py-0.5 rounded text-[8px] uppercase font-bold border">${getCategoryDisplayName(exp.category||'Other').replace('Taklu - ','')}</span></td><td class="px-2 py-2 text-left font-extrabold align-top text-xs ${isInc?'text-green-600':'text-red-500'}">${isInc?'+':'-'}₹${formatINR(exp.amount)}</td><td class="px-2 py-2 align-top text-left"><div class="flex flex-col items-start gap-1"><button onclick="window.openEditModal('${exp.id}')" class="text-blue-500 text-xs">✏️</button><button onclick="window.deleteExpense('${exp.id}')" class="text-red-500 font-bold text-base">&times;</button></div></td>`;
                     tb.appendChild(tr);
                 } catch(e) { console.error("Skipped bad entry", exp); } 
             });
